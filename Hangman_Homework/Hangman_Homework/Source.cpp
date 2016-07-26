@@ -20,8 +20,6 @@ int main()
 	int WordLength = SecretWord.size();
 	int count = 8;
 	char GuessLetters;
-	
-	auto first = SecretWord.begin();
 
 	string GuessWord;
 
@@ -47,16 +45,14 @@ int main()
 		
 		cout << "Enter your guess: ";
 		cin >> GuessLetters;
-		tolower(GuessLetters);
 
 		for (int i = 0; i < WordLength; i++)
 		{
-			if (GuessLetters == SecretWord[i])
+			if (SecretWord[i] == GuessLetters)
 			{	
-				SecretWord.insert(first + i, GuessLetters, GuessLetters);
-				SecretWord.erase(first + i + 1);
+				GuessWord[i] = GuessLetters;
 			}
-			else
+			else if(!(SecretWord[i] == GuessLetters))
 			{
 				cout << "Sorry, " << GuessLetters << " isn't in the word." << endl;
 				count--;
@@ -66,11 +62,11 @@ int main()
 
 		for (int i = 0; i < WordLength; i++)
 		{
-			if (GuessWord[i] != '-')
+			if (!(GuessWord[i] = '-'))
 			{
 				cout << "You guessed it!" << endl;
-				cout << "The word was hangmans" << endl;
-				break;
+				cout << "The word was " << SecretWord << endl;
+				return 0;
 			}
 		}
 
