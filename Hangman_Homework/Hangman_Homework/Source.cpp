@@ -21,6 +21,8 @@ int main()
 	int count = 8;
 	char GuessLetters;
 
+	bool Check = false;
+
 	string GuessWord;
 
 	GuessWord.append(WordLength, '-');
@@ -52,23 +54,33 @@ int main()
 			{	
 				GuessWord[i] = GuessLetters;
 			}
-			else if(!(SecretWord[i] == GuessLetters))
-			{
-				cout << "Sorry, " << GuessLetters << " isn't in the word." << endl;
-				count--;
-				break;
-			}
 		}
 
 		for (int i = 0; i < WordLength; i++)
 		{
-			if (!(GuessWord[i] = '-'))
+			if (GuessWord == SecretWord)
 			{
 				cout << "You guessed it!" << endl;
 				cout << "The word was " << SecretWord << endl;
 				return 0;
 			}
 		}
+
+		for (int i = 0; i < WordLength; i++)
+		{
+			if (GuessWord[i] == GuessLetters)
+			{
+				Check = true;
+			}
+		}
+
+		if (Check == false)
+		{
+			cout << "Sorry, " << GuessLetters << " isn't in the word." << endl;
+			count--;
+		}
+
+		Check = false;
 
 		cout << "You have " << count << " incorrect guesses left." << endl;
 
