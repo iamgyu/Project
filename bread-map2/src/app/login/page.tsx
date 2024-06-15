@@ -7,11 +7,10 @@ function Login() {
     return (
         <div className={styles.loginPage}>
             <div className={styles.loginBox}>
-                <div className={styles.logoImage}>
-                </div>
+                <div className={styles.logoWord}>BREAD-MAP</div>
                 <div className={styles.inputBox}>
                     <p className={styles.word}>이메일 주소</p>
-                    <input className={styles.input} type="text" placeholder="아이디" />
+                    <input className={styles.input} type="text" placeholder="이메일" />
                 </div>
                 <div className={styles.inputBox}>
                     <p className={styles.word}>비밀번호</p>

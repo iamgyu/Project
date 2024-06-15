@@ -1,0 +1,73 @@
+.loginPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    
+    .loginBox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 500px;
+
+        .logoWord {
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .inputBox {
+            display: flex;
+            flex-direction: column;
+            margin-top: 50px;
+            gap: 8px;
+            width: 100%;
+            
+            .word {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .input {
+                height: 30px;
+                width: 100%;
+                color: black;
+                background-color: white;
+                outline: none;
+                border: none;
+                border-bottom: 1px solid rgb(198, 198, 198);
+
+                &::placeholder {
+                    color: rgb(198, 198, 198);
+                }
+
+                &:focus {
+                    border-bottom: 2px solid black;
+                }
+
+                &:focus::placeholder {
+                    color: white;
+                }
+            }
+        }
+
+        .button {
+            width: 100%;
+            height: 50px;
+            border-radius: 16px;
+            border: none;
+            font-size: 16px;
+            margin-top: 50px;
+            background-color: rgb(34, 34, 34);
+            cursor: pointer;
+        }
+
+        .joinNav {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 14px;
+        }
+    }
+}

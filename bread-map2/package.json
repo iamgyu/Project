@@ -1,5 +1,5 @@
 {
-  "name": "bread-map",
+  "name": "bread-map2",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.3",
+    "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
     "react-kakao-maps-sdk": "^1.1.27"
   },
   "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3",
-    "kakao.maps.d.ts": "^0.1.39"
+    "eslint-config-next": "14.2.4",
+    "kakao.maps.d.ts": "^0.1.39",
+    "typescript": "^5"
   }
 }
