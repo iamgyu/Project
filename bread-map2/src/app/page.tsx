@@ -3,7 +3,8 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import styles from './page.module.css';
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface InfoBoxProps {
   activeIndex: number;
@@ -27,7 +28,7 @@ const MainSearch: React.FC<MainSearchProps> = ({categoryIndex, setCategoryIndex}
   ];
 
   const clickCategory = (index: number) => {
-    setCategoryIndex(index === categoryIndex ? categoryIndex : index);
+    setCategoryIndex(index === categoryIndex ? -1 : index);
   };
 
   return (
@@ -157,20 +158,130 @@ const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryI
 }
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const bread1Markers = [
+    {
+      title: "소금빵집1",
+      latlng: { lat: 37.24226, lng: 127.04576 },
+    },
+    {
+      title: "소금빵집2",
+      latlng: {lat: 37.24426, lng: 127.04576}
+    },
+    {
+      title: "소금빵집3",
+      latlng: {lat: 37.24626, lng: 127.04576}
+    },
+    {
+      title: "소금빵집4",
+      latlng: {lat: 37.24826, lng: 127.04576}
+    },
+  ]
+
+  const bread2Markers = [
+    {
+      title: "식빵집1",
+      latlng: { lat: 37.24226, lng: 127.04776 },
+    },
+    {
+      title: "식빵집2",
+      latlng: {lat: 37.24426, lng: 127.04776}
+    },
+    {
+      title: "식빵집3",
+      latlng: {lat: 37.24626, lng: 127.04776}
+    },
+    {
+      title: "식빵집4",
+      latlng: {lat: 37.24826, lng: 127.04776}
+    },
+  ]
+
+  const bread3Markers = [
+    {
+      title: "베이글빵집1",
+      latlng: { lat: 37.24226, lng: 127.04976 },
+    },
+    {
+      title: "베이글빵집2",
+      latlng: {lat: 37.24426, lng: 127.04976}
+    },
+    {
+      title: "베이글빵집3",
+      latlng: {lat: 37.24626, lng: 127.04976}
+    },
+    {
+      title: "베이글빵집4",
+      latlng: {lat: 37.24826, lng: 127.04976}
+    },
+  ]
 
   const position = {
-    lat: 37.24298628798161,
-    lng: 127.04491272890326
+    lat: Number(searchParams.get("lat")) || 33.5563,
+    lng: Number(searchParams.get("lng")) || 126.79581,
   };
 
   const [infoBoxToggle, setInfoBoxToggle] = useState(false);
   const [leftPosition, setLeftPosition] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함
-  const [categoryIndex, setCategoryIndex] = useState(0); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
+  const [categoryIndex, setCategoryIndex] = useState(-1); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
+  const [isVisible, setIsVisible] = useState([false, false, false]); // 카테고리 선택 시 맵에 마커가 보이는 것을 위함
+
+  useEffect(() => {
+    let newVisibility;
+    switch (categoryIndex) {
+      case 0:
+        newVisibility = [true, true, true];
+        break;
+      case 1:
+        newVisibility = [true, false, false];
+        break;
+      case 2:
+        newVisibility = [false, true, false];
+        break;
+      case 3:
+        newVisibility = [false, false, true];
+        break;
+      default:
+        newVisibility = [false, false, false];
+    }
+    setIsVisible(newVisibility);
+  }, [categoryIndex]);
+
+  const handlePosition = (map: kakao.maps.Map) => {
+    const lng = map.getCenter().getLng();
+    const lat = map.getCenter().getLat();
+    const params = new URLSearchParams(searchParams);
+    params.set("lng", String(lng));
+    params.set("lat", String(lat));
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const toggleClick = () => {
     setInfoBoxToggle(!infoBoxToggle);
     setLeftPosition(leftPosition === 0 ? 400 : 0);
+  };
+
+  const currentLocClick = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        router.replace(
+          `/?${new URLSearchParams({
+            lat: String(position.coords.latitude),
+            lng: String(position.coords.longitude),
+          }).toString()}`
+        );
+      },
+      () => alert("위치 정보를 가져오는데 실패했습니다."),
+      {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000,
+      }
+    );
   };
 
   return (
@@ -182,11 +293,32 @@ export default function Home() {
       <div className={styles.custom_btn}>
         <Link href="/login"><button className={styles.go_login}>로그인</button></Link>
       </div>
+      <div className={styles.currentLoc}>
+        <button className={styles.currentLocBtn} onClick={currentLocClick}>현재위치</button>
+      </div>
       <Map
         center={position}
+        onDragEnd={handlePosition}
         style={{ width: "100%", height: "100vh", left: `${leftPosition}px`}}
         level={3}>
-          <MapMarker position={position}/>
+        {
+          isVisible[0] &&
+          bread1Markers.map((marker, index) => (
+            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} />
+          ))
+        }
+        {
+          isVisible[1] &&
+          bread2Markers.map((marker, index) => (
+            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} title={marker.title} />
+          ))
+        }
+        {
+          isVisible[2] &&
+          bread3Markers.map((marker, index) => (
+            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} title={marker.title} />
+          ))
+        }
       </Map>
     </>
   );
