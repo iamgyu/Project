@@ -6,6 +6,21 @@
     overflow: auto;
     background-color: rgb(243, 243, 243);
 
+    .homeBtn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 20px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 60px;
+        color: black;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
     .bakery_info {
         display: flex;
         flex-direction: column;
@@ -141,14 +156,60 @@
             }
         }
         
-        .okBtn {
-            padding: 16px 48px;
-            margin-top: 35px;
-            border-radius: 16px;
-            background-color: black;
-            color: white;
-            border: none;
-            cursor: pointer;
+        .recommand_category {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            width: 100%;
+            gap: 10px;
+            border-bottom: 1px solid rgb(239, 239, 239);
+
+            .categoryList {
+                display: flex;
+                gap: 10px;
+
+                .item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 60px;
+                    padding: 5px 0;
+                    color: gray;
+                    border: 1px solid gray;
+                    font-size: 12px;
+                    border-radius: 16px;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .comment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 auto;
+            gap: 20px;
+
+            .commentBox {
+                color: black;
+                background-color: white;
+            }
+            
+            .btnCollection {
+                display: flex;
+                gap: 20px;
+                
+                .btn {
+                    padding: 16px 48px;
+                    border-radius: 16px;
+                    background-color: black;
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                }
+            }
         }
     }
 }

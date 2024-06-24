@@ -1,0 +1,170 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(243, 243, 243);
+
+    .homeBtn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 20px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 60px;
+        color: black;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    .user_info {
+        display: flex;
+        align-items: center;
+        width: 800px;
+        height: 100px;
+        margin-top: 20px;
+        gap: 20px;
+        border: 1px solid rgb(233, 233, 233);
+        border-radius: 8px;
+        background-color: white;
+
+        .user_img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            width: 50px;
+            margin-left: 20px;
+            font-size: 12px;
+            border-radius: 50%;
+            background-color: gray;
+        }
+
+        .user_name {
+            display: flex;
+            flex-direction: column;
+
+            .user_nickname {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .user_email {
+                font-size: 12px;
+                color: gray;
+            }
+        }
+
+        .logoutBtn {
+            margin-left: auto;
+            margin-right: 20px;
+            padding: 10px 20px;
+            border: 1px solid red;
+            border-radius: 4px;
+            color: red;
+            background-color: transparent;
+            cursor: pointer;
+        }
+    }
+
+    .user_interest {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 40px;
+        gap: 10px;
+        width: 800px;
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .interest_box {
+            width: 100%;
+            height: 300px;
+            border: 1px solid rgb(233, 233, 233);
+            border-radius: 8px;
+            overflow: auto;
+            background-color: white;
+
+            .bakery {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                padding: 15px 20px;
+        
+                .rank {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    width: 20px;
+                }
+                
+                .delete_interest {
+                    margin-left: auto;
+                    padding: 3px 5px;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .user_review {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 40px;
+        gap: 10px;
+        width: 800px;
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .review_box {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+            border: 1px solid rgb(233, 233, 233);
+            border-radius: 8px;
+            overflow: auto;
+            background-color: white;
+
+            .review {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                padding: 15px 20px;
+
+                .rank {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    width: 20px;
+                }
+
+                .text {
+                    width: 200px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+
+                .delete_review {
+                    margin-left: auto;
+                    padding: 3px 5px;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

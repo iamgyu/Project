@@ -101,7 +101,7 @@ const MainInterest = () => {
   return (
     <div className={styles.info_main_interest}>
       <div className={styles.interests}>
-        <p className={styles.title}>내 관심빵집</p>
+        <p className={styles.title}>내 관심 빵집</p>
         {data.map((item, index) => (
           <div key={item.id} className={styles.bakery}>
             <p className={styles.rank}>{index + 1}</p>
@@ -227,7 +227,7 @@ export default function Home() {
   const [infoBoxToggle, setInfoBoxToggle] = useState(false);
   const [leftPosition, setLeftPosition] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함
-  const [categoryIndex, setCategoryIndex] = useState(-1); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
+  const [categoryIndex, setCategoryIndex] = useState(0); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
   const [isVisible, setIsVisible] = useState([false, false, false]); // 카테고리 선택 시 맵에 마커가 보이는 것을 위함
 
   useEffect(() => {
@@ -295,6 +295,12 @@ export default function Home() {
       </div>
       <div className={styles.currentLoc}>
         <button className={styles.currentLocBtn} onClick={currentLocClick}>현재위치</button>
+      </div>
+      <div className={styles.myPage}>
+        <Link href={"/myPage"}><button className={styles.myPageBtn}>마이페이지</button></Link>
+      </div>
+      <div className={styles.addBakery}>
+        <Link href={"/addBakery"}><button className={styles.addBakeryBtn}>빵집 추가</button></Link>
       </div>
       <Map
         center={position}
