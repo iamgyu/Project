@@ -157,6 +157,30 @@ const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryI
   )
 }
 
+interface EventMarkerContainerProps {
+  position: {lat: number, lng: number};
+  id: number;
+  title: string;
+  isClicked: number;
+  setIsClicked: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id, title, isClicked, setIsClicked}) => {
+
+  return (
+    <MapMarker position={position} clickable={true} onClick={() => setIsClicked(id)}>
+      {
+        isClicked === id && (
+          <div style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+            <p>{title}</p>
+            <button onClick={() => setIsClicked(-1)}>끄기</button>
+          </div>
+        )
+      }
+    </MapMarker>
+  )
+}
+
 export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -164,18 +188,22 @@ export default function Home() {
 
   const bread1Markers = [
     {
+      id: 1,
       title: "소금빵집1",
       latlng: { lat: 37.24226, lng: 127.04576 },
     },
     {
+      id:2,
       title: "소금빵집2",
       latlng: {lat: 37.24426, lng: 127.04576}
     },
     {
+      id:3,
       title: "소금빵집3",
       latlng: {lat: 37.24626, lng: 127.04576}
     },
     {
+      id:4,
       title: "소금빵집4",
       latlng: {lat: 37.24826, lng: 127.04576}
     },
@@ -183,18 +211,22 @@ export default function Home() {
 
   const bread2Markers = [
     {
+      id:5,
       title: "식빵집1",
       latlng: { lat: 37.24226, lng: 127.04776 },
     },
     {
+      id:6,
       title: "식빵집2",
       latlng: {lat: 37.24426, lng: 127.04776}
     },
     {
+      id:7,
       title: "식빵집3",
       latlng: {lat: 37.24626, lng: 127.04776}
     },
     {
+      id:8,
       title: "식빵집4",
       latlng: {lat: 37.24826, lng: 127.04776}
     },
@@ -202,26 +234,30 @@ export default function Home() {
 
   const bread3Markers = [
     {
+      id:9,
       title: "베이글빵집1",
       latlng: { lat: 37.24226, lng: 127.04976 },
     },
     {
+      id:10,
       title: "베이글빵집2",
       latlng: {lat: 37.24426, lng: 127.04976}
     },
     {
+      id:11,
       title: "베이글빵집3",
       latlng: {lat: 37.24626, lng: 127.04976}
     },
     {
+      id:12,
       title: "베이글빵집4",
       latlng: {lat: 37.24826, lng: 127.04976}
     },
   ]
 
   const position = {
-    lat: Number(searchParams.get("lat")) || 33.5563,
-    lng: Number(searchParams.get("lng")) || 126.79581,
+    lat: Number(searchParams.get("lat")) || 37.245271,
+    lng: Number(searchParams.get("lng")) || 127.06295,
   };
 
   const [infoBoxToggle, setInfoBoxToggle] = useState(false);
@@ -229,6 +265,7 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함
   const [categoryIndex, setCategoryIndex] = useState(0); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
   const [isVisible, setIsVisible] = useState([false, false, false]); // 카테고리 선택 시 맵에 마커가 보이는 것을 위함
+  const [isClicked, setIsClicked] = useState(-1); // 맵 마커 클릭 시 div 보임을 위함
 
   useEffect(() => {
     let newVisibility;
@@ -284,6 +321,20 @@ export default function Home() {
     );
   };
 
+  const geocoder = new kakao.maps.services.Geocoder();
+
+  geocoder.addressSearch('제주특별자치도 제주시 첨단로 242', (result: any[], status: string) => {
+    // 정상적으로 검색이 완료됐을 경우
+    if (status === kakao.maps.services.Status.OK) {
+        // 좌표를 가져옵니다.
+        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        
+        console.log('Coordinates:', coords);
+    } else {
+        console.error('Address search failed:', status);
+    }
+});
+
   return (
     <>
       { infoBoxToggle && <InfoBox activeIndex={activeIndex} setActiveIndex={setActiveIndex} categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex} /> }
@@ -310,19 +361,19 @@ export default function Home() {
         {
           isVisible[0] &&
           bread1Markers.map((marker, index) => (
-            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} />
+            <EventMarkerContainer key={marker.id} position={marker.latlng} title={marker.title} id={marker.id} isClicked={isClicked} setIsClicked={setIsClicked}/>
           ))
         }
         {
           isVisible[1] &&
           bread2Markers.map((marker, index) => (
-            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} title={marker.title} />
+            <EventMarkerContainer key={marker.id} position={marker.latlng} title={marker.title} id={marker.id} isClicked={isClicked} setIsClicked={setIsClicked}/>
           ))
         }
         {
           isVisible[2] &&
           bread3Markers.map((marker, index) => (
-            <MapMarker key={`${marker.title}-${marker.latlng}`} position={marker.latlng} title={marker.title} />
+            <EventMarkerContainer key={marker.id} position={marker.latlng} title={marker.title} id={marker.id} isClicked={isClicked} setIsClicked={setIsClicked}/>
           ))
         }
       </Map>
