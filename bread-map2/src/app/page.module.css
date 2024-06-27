@@ -1,261 +1,73 @@
-/* 민트 : #AAF0D1 <- 메인컬러 */
-/* 연보라 : #E0B0FF <- 포인트컬러*/
-
-.info_box {
+.loginPage {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: absolute;
-  float: left;
-  width: 400px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100vh;
-  z-index: 30;
-  background-color: white;
-
-  .info_header {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 180px;
-    background-color: #AAF0D1;
-
-    .logoWord {
-      padding: 20px 20px;
-      color: gray;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .inputBox {
+  
+  .loginBox {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      
-      .textBox {
-        width: 300px;
-        height: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 4px 0 0 4px;
-        outline: none;
-        font-size: 16px;
-        color: gray;
-        background-color: white;
-      }
+      width: 500px;
 
-      .searchBtn {
-        width: 60px;
-        height: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 0 4px 4px 0;
-        font-size: 16px;
-        background-color: black;
-        cursor: pointer;
-        color: gray;
-        background-color: white;
-      }
-    }
-
-    .navBar {
-      display: flex;
-      width: 100%;
-      padding: 20px 0;
-      flex: 1;
-
-      .menu {
-        display: flex;
-        padding: 0 20px;
-        width: 100%;
-        align-items: center;
-        justify-content: space-evenly;
-        list-style: none;
-
-        .tab {
-          padding: 5px 15px;
-          border-radius: 4px;
-          color: gray;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .info_main_search {
-    flex: 1;
-
-    .around_search {
-      padding: 20px;
-
-      .title {
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .category {
-        display: flex;
-        list-style: none;
-        flex-wrap: wrap;
-        padding-top: 20px;
-        gap: 10px;
-
-        .item {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 110px;
-          height: 110px;
-          color: gray;
-          border: 1px solid gray;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .info_main_rank {
-    flex: 1;
-    
-    .rank_category {
-      padding: 20px;
-      border-bottom: 1px solid rgb(238, 238, 238);
-      
-      .title {
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .category {
-        display: flex;
-        flex-wrap: wrap;
-        list-style: none;
-        padding-top: 20px;
-        gap: 10px;
-
-        .item {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 60px;
-          padding: 5px 0;
-          color: gray;
-          border: 1px solid gray;
-          font-size: 12px;
-          border-radius: 16px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .info_main_interest {
-    flex: 1;
-
-    .interests {
-      padding: 20px;
-
-      .title {
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .bakery {
-        display: flex;
-        padding: 20px 0;
-
-        .rank {
+      .logoWord {
+          font-size: 40px;
           font-weight: bold;
-        }
-
-        .bakery_info {
-          padding: 0 20px;
-        }
       }
-    }
-  }
-}
+      
+      .inputBox {
+          display: flex;
+          flex-direction: column;
+          margin-top: 50px;
+          gap: 8px;
+          width: 100%;
+          
+          .word {
+              font-size: 16px;
+              font-weight: bold;
+          }
 
-.toggleBtnBox {
-  position: absolute;
-  height: 100%;
-  z-index: 30;
+          .input {
+              height: 30px;
+              width: 100%;
+              color: black;
+              background-color: white;
+              outline: none;
+              border: none;
+              border-bottom: 1px solid rgb(198, 198, 198);
 
-  .toggleBtn {
-    position: absolute;
-    top: 45%;
-    width: 18px;
-    height: 44px;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    color: black;
-    background-color: white;
-    cursor: pointer;
-  }
-}
+              &::placeholder {
+                  color: rgb(198, 198, 198);
+              }
 
-.custom_btn {
-  position: absolute;
-  overflow: hidden;
-  top: 10px;
-  right: 10px;
-  z-index: 30;
-  font-size: 16px;
+              &:focus {
+                  border-bottom: 2px solid black;
+              }
 
-  .go_login {
-    padding: 5px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #E0B0FF;
-    cursor: pointer;
-  }
-}
+              &:focus::placeholder {
+                  color: white;
+              }
+          }
+      }
 
-.currentLoc {
-  position: absolute;
-  top: 10px;
-  right: 100px;
-  z-index: 30;
+      .button {
+          width: 100%;
+          height: 50px;
+          border-radius: 16px;
+          border: none;
+          font-size: 16px;
+          margin-top: 50px;
+          background-color: rgb(34, 34, 34);
+          cursor: pointer;
+      }
 
-  .currentLocBtn {
-    padding: 5px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #E0B0FF;
-    cursor: pointer;
-  }
-}
-
-.myPage {
-  position: absolute;
-  top: 10px;
-  right: 200px;
-  z-index: 30;
-
-  .myPageBtn {
-    padding: 5px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #E0B0FF;
-    cursor: pointer;
-  }
-}
-
-.addBakery {
-  position: absolute;
-  top: 10px;
-  right: 315px;
-  z-index: 30;
-
-  .addBakeryBtn {
-    padding: 5px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #E0B0FF;
-    cursor: pointer;
+      .joinNav {
+          display: flex;
+          justify-content: space-evenly;
+          margin-top: 20px;
+          width: 100%;
+          font-size: 14px;
+      }
   }
 }
