@@ -24,7 +24,7 @@ function Home() {
             axios.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${res.data.jwt}`;
-            Cookies.set("jwt", res.data.jwt);
+            Cookies.set("jwt", res.data.jwt, {expires: 1});
             router.push("/mainPage");
           } else {
             alert(res.data.result);
