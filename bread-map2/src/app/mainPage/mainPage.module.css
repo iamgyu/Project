@@ -2,12 +2,30 @@
 /* 연보라 : #E0B0FF <- 포인트컬러*/
 
 .markerInfoBox {
+	display: flex;
+	flex-direction: column;
 	width: 400px;
-	height: 200px;
+	height: 140px;
 	padding: 20px;
+	gap: 8px;
 
 	.title {
 		font-size: 18px;
+	}
+
+	.score {
+		color: rgb(236, 104, 99);
+		font-size: 14px;
+		padding-bottom: 5px;
+	}
+
+	.address {
+		font-size: 14px;
+	}
+	
+	.goMoreInfo {
+		color: rgb(87, 126, 202);
+		font-size: 12px;
 	}
 
 	.offBtn {

@@ -12,19 +12,61 @@ import axios from "axios";
 interface EventMarkerContainerProps {
 	position: {lat: number, lng: number};
 	id: number;
-	title: string;
 	isClicked: number;
 	setIsClicked: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id, title, isClicked, setIsClicked}) => {
+interface OneBakery {
+	id: number;
+	name: string;
+	address: string;
+	score: number;
+	review_number: number;
+	breads: string[];
+	interest: boolean;
+}
+
+const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id, isClicked, setIsClicked}) => {
+	const [oneBakery, setOneBakery] = useState<OneBakery>({
+		id: 0,
+		name: '기본 빵집',
+		address: '알 수 없음',
+		score: 0,
+		review_number: 0,
+		breads: [],
+		interest: false,
+	});
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+	
+	useEffect(() => {
+		const fetchOneBakery = async () => {
+			try {
+				const res = await axios.get<OneBakery>("http://127.0.0.1:5001/bakeries/" + id, config)
+				setOneBakery(res.data);
+			} catch (error) {
+				if (axios.isAxiosError(error)) {
+					console.error('Error fetching bakeries: ', error.message);
+				}
+			}
+		}
+		fetchOneBakery();
+	}, [id])
 
 	return (
 		<MapMarker position={position} clickable={true} onClick={() => setIsClicked(id)}>
 			{
 				isClicked === id && (
 				<div className={styles.markerInfoBox} onClick={(e) => e.stopPropagation()}>
-					<p className={styles.title}>{title}</p>
+					<p className={styles.title}>{oneBakery.name}</p>
+					<p className={styles.score}>평점 : {oneBakery.score} | 리뷰 : {oneBakery.review_number}</p>
+					<p className={styles.address}>{oneBakery.address}</p>
+					<p className={styles.goMoreInfo}>상세 페이지 이동</p>
 					<button className={styles.offBtn} onClick={() => setIsClicked(-1)}>끄기</button>
 				</div>
 				)
@@ -41,7 +83,7 @@ interface Bakery {
 	name: string;
 }
 
-function Home() {
+function MainPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -67,20 +109,20 @@ function Home() {
 	};
 
 	useEffect(() => {
-		axios.get("http://127.0.0.1:5001/users", config)
-		.then(res => {
-			if (res.data.result === "로그인 실패"){
-				Cookies.remove("jwt");
-				router.push("/");
-			}
-		})
-	});
-
+		if (Cookies.get('jwt') === undefined){
+			router.push("/");
+		}
+	  }, []);
+	  
 	useEffect(() => {
-		const fetchBakery = async () => {
+		const fetchBakeries = async () => {
 			try {
 				const res = await axios.get<Bakery[]>("http://127.0.0.1:5001/bakeries", config)
-				setBakeries(res.data);
+				if (Cookies.get('jwt') === undefined){
+					setBakeries([]);
+				} else {
+					setBakeries(res.data);
+				}
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
 					console.error('Error fetching bakeries: ', error.message);
@@ -88,29 +130,8 @@ function Home() {
 			}
 		}
 		
-		fetchBakery();
+		fetchBakeries();
 	}, []);
-
-	useEffect(() => {
-		let newVisibility;
-		switch (categoryIndex) {
-		case 0:
-			newVisibility = [true, true, true];
-			break;
-		case 1:
-			newVisibility = [true, false, false];
-			break;
-		case 2:
-			newVisibility = [false, true, false];
-			break;
-		case 3:
-			newVisibility = [false, false, true];
-			break;
-		default:
-			newVisibility = [false, false, false];
-		}
-		setIsVisible(newVisibility);
-	}, [categoryIndex]);
 
 	const handlePosition = (map: kakao.maps.Map) => {
 		const lng = map.getCenter().getLng();
@@ -147,6 +168,7 @@ function Home() {
 
 	const handleLogout = () => {
 		Cookies.remove("jwt");
+		router.push("/");
 	}
 
   return (
@@ -156,7 +178,7 @@ function Home() {
 				<button className={styles.toggleBtn} onClick={toggleClick} style={{ left: `${leftPosition}px` }}>{">"}</button>
 			</div>
 			<div className={styles.custom_btn}>
-				<Link href="/"><button className={styles.go_login} onClick={handleLogout}>로그아웃</button></Link>
+				<button className={styles.go_login} onClick={handleLogout}>로그아웃</button>
 			</div>
 			<div className={styles.currentLoc}>
 				<button className={styles.currentLocBtn} onClick={currentLocClick}>현재위치</button>
@@ -174,7 +196,7 @@ function Home() {
 				level={3}>
 				{
 					bakeries.map((bakery, index) => (
-						<EventMarkerContainer key={bakery.id} position={{lat: bakery.lat, lng: bakery.lng}} title={bakery.name} id={bakery.id} isClicked={isClicked} setIsClicked={setIsClicked} />
+						<EventMarkerContainer key={bakery.id} position={{lat: bakery.lat, lng: bakery.lng}} id={bakery.id} isClicked={isClicked} setIsClicked={setIsClicked} />
 					))
 				}
 			</Map>
@@ -182,4 +204,4 @@ function Home() {
  	);
 } 
 
-export default Home;
+export default MainPage;
