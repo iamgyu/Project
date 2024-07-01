@@ -66,7 +66,13 @@ const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id
 					<p className={styles.title}>{oneBakery.name}</p>
 					<p className={styles.score}>평점 : {oneBakery.score} | 리뷰 : {oneBakery.review_number}</p>
 					<p className={styles.address}>{oneBakery.address}</p>
-					<p className={styles.goMoreInfo}>상세 페이지 이동</p>
+					<Link href={{
+						pathname: '/moreInfo',
+						query: {
+							data: id
+						}}}>
+						<p className={styles.goMoreInfo}>상세 페이지 이동</p>
+					</Link>
 					<button className={styles.offBtn} onClick={() => setIsClicked(-1)}>끄기</button>
 				</div>
 				)
@@ -88,6 +94,7 @@ function MainPage() {
 	const router = useRouter();
 	const pathname = usePathname();
 
+	const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 가능 여부
 	const [infoBoxToggle, setInfoBoxToggle] = useState(false);
 	const [leftPosition, setLeftPosition] = useState(0);
 	const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함
@@ -104,21 +111,41 @@ function MainPage() {
 	};
 
 	const position = {
-		lat: Number(searchParams.get("lat")) || 37.245271,
-		lng: Number(searchParams.get("lng")) || 127.06295,
+		lat: Number(searchParams.get("lat")) || 37.500,
+		lng: Number(searchParams.get("lng")) || 126.77,
 	};
 
 	useEffect(() => {
-		if (Cookies.get('jwt') === undefined){
+		const checkLogin = async () => {
+			try {
+				const res = await axios.get("http://127.0.0.1:5001/users", config);
+				if (res.data.result === "로그인 실패") {
+					setCanLogin(false);
+				} else {
+					setCanLogin(true);
+				}
+			} catch (error) {
+				console.error('Error checking login:', error);
+				setCanLogin(false);
+			}
+		};
+		checkLogin();
+	}, []);
+
+	useEffect(() => {
+		if (canLogin === false || Cookies.get('jwt') === undefined){
+			Cookies.remove('jwt');
+			setBakeries([]);
 			router.push("/");
 		}
-	  }, []);
-	  
+	}, [canLogin]);
+
 	useEffect(() => {
 		const fetchBakeries = async () => {
 			try {
 				const res = await axios.get<Bakery[]>("http://127.0.0.1:5001/bakeries", config)
-				if (Cookies.get('jwt') === undefined){
+
+				if (!canLogin || Cookies.get('jwt') === undefined){
 					setBakeries([]);
 				} else {
 					setBakeries(res.data);
@@ -131,7 +158,7 @@ function MainPage() {
 		}
 		
 		fetchBakeries();
-	}, []);
+	}, [canLogin]);
 
 	const handlePosition = (map: kakao.maps.Map) => {
 		const lng = map.getCenter().getLng();
