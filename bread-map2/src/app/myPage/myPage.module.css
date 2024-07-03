@@ -47,6 +47,7 @@
 
         .user_name {
             display: flex;
+            gap: 6px;
             flex-direction: column;
 
             .user_nickname {
@@ -55,6 +56,11 @@
             }
 
             .user_email {
+                font-size: 12px;
+                color: gray;
+            }
+
+            .user_level {
                 font-size: 12px;
                 color: gray;
             }

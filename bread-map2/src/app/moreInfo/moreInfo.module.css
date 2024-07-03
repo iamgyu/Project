@@ -23,6 +23,7 @@
 
     .bakery_info {
         display: flex;
+        position: relative;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -31,6 +32,13 @@
         height: 200px;
         gap: 20px;
         background-color: white;
+
+        .interestBtn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 10px 5px;
+        }
 
         .name {
             font-size: 40px;
@@ -103,16 +111,32 @@
             }
         }
 
-        .one_review {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            padding: 20px 0;
-            border-bottom: 1px solid rgb(239, 239, 239);
+        .review_collection {
+            overflow-y: auto;
+            -ms-overflow-style: none;
 
-            .user_info {
+            .one_review {
                 display: flex;
-                gap: 20px;
+                flex-direction: column;
+                gap: 8px;
+                padding: 15px 0;
+                border-bottom: 1px solid rgb(239, 239, 239);
+    
+                .user_info {
+                    display: flex;
+                    gap: 10px;
+    
+                    .name {
+                        font-weight: bold;
+                        line-height: 16px;
+                    }
+    
+                    .level {
+                        color: gray;
+                        font-size: 12px;
+                        line-height: 16px;
+                    }
+                }
             }
         }
     }

@@ -66,8 +66,8 @@ const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id
 					<p className={styles.title}>{oneBakery.name}</p>
 					<p className={styles.score}>평점 : {oneBakery.score} | 리뷰 : {oneBakery.review_number}</p>
 					<p className={styles.address}>{oneBakery.address}</p>
-					<Link href={{
-						pathname: '/moreInfo',
+					<Link target="_blank" href={{
+						pathname: "/moreInfo",
 						query: {
 							data: id
 						}}}>
@@ -94,7 +94,7 @@ function MainPage() {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 가능 여부
+	const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 상태 유지 여부
 	const [infoBoxToggle, setInfoBoxToggle] = useState(false);
 	const [leftPosition, setLeftPosition] = useState(0);
 	const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함

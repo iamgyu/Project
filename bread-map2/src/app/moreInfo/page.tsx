@@ -9,14 +9,19 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 interface ModalPageProps {
+    bakeryId: number;
+    bakeryName: string;
     clickModal: () => void;
+    fetchBakeryInfo: () => void;
+    fetchReview: () => void;
 }
 
 interface CategoryState {
     [key: number]: boolean;
 }
 
-const ModalPage: React.FC<ModalPageProps> = ({ clickModal }) => {
+const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal, fetchBakeryInfo, fetchReview}) => {
+    const [content, setContent] = useState('');
     const [rating, setRating] = useState(1);
     const [categorySelect, setCategorySelect] = useState<CategoryState>({
         1: false,
@@ -36,6 +41,13 @@ const ModalPage: React.FC<ModalPageProps> = ({ clickModal }) => {
         { id: 6, text: '케이크' },
     ];
 
+    const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+
     const clickCategory = (id: number) => {
         setCategorySelect(prevState => ({
             ...prevState,
@@ -43,10 +55,29 @@ const ModalPage: React.FC<ModalPageProps> = ({ clickModal }) => {
         }));
     };
 
+    const reviewHandle = () => {
+        axios.post("http://127.0.0.1:5001/reviews", {
+            content: content,
+            image: "image",
+            score: rating,
+            bakery_id: bakeryId,
+            category_ids: Object.entries(categorySelect).filter(([key, value]) => value).map(([key, value]) => parseInt(key, 10)),
+        }, config)
+        .then(res => {
+            if (res.data.result === undefined) {
+                fetchBakeryInfo();
+                fetchReview();
+                clickModal();
+            } else {
+                alert(res.data.message);
+            }
+        })
+    };
+
     return(
         <div className={styles.modalPage}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <p className={styles.word}>빵집 이름</p>
+                <p className={styles.word}>{bakeryName}</p>
                 <div className={styles.starRating}>
                     {[...Array(rating)].map((a, i) => (
                         <PiStarFill className={styles.star} key={i} onClick={() => setRating(i + 1)} />
@@ -70,10 +101,10 @@ const ModalPage: React.FC<ModalPageProps> = ({ clickModal }) => {
                     </div>
                 </div>
                 <div className={styles.comment}>
-                    <textarea className={styles.commentBox} rows={12} cols={50}/>
+                    <textarea className={styles.commentBox} rows={12} cols={50} onChange={(e) => setContent(e.target.value)}/>
                     <div className={styles.btnCollection}>
                         <button className={styles.btn} onClick={clickModal}>취소</button>
-                        <button className={styles.btn}>등록</button>
+                        <button className={styles.btn} onClick={reviewHandle}>등록</button>
                     </div>
                 </div>
             </div>
@@ -99,11 +130,12 @@ interface Reviews {
     user_nickname: string;
     user_level: string;
     breads: string[];
-
 }
+
 function MoreInfo() {
     const router = useRouter();
 
+    const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 상태 유지 여부
     const [showModal, setShowModal] = useState(false);
     const [bakeryInfo, setBakeryInfo] = useState<BakeryInfo>({
         id: 0,
@@ -115,7 +147,7 @@ function MoreInfo() {
 		interest: false,
     });
     const [reviews, setReviews] = useState<Reviews[]>([]);
-
+    
     const config = {
 		headers: {
 			'Content-Type': 'application/json',
@@ -123,55 +155,123 @@ function MoreInfo() {
 		},
 	};
 
+    useEffect(() => {
+		const checkLogin = async () => {
+			try {
+				const res = await axios.get("http://127.0.0.1:5001/users", config);
+				if (res.data.result === "로그인 실패") {
+					setCanLogin(false);
+				} else {
+					setCanLogin(true);
+				}
+			} catch (error) {
+				console.error('Error checking login:', error);
+				setCanLogin(false);
+			}
+		};
+		checkLogin();
+	}, []);
+
     const clickModal = () => {
         setShowModal(!showModal);
     };
 
     useEffect(() => {
-		if (Cookies.get('jwt') === undefined){
+		if (canLogin === false || Cookies.get('jwt') === undefined){
+            Cookies.remove('jwt');
+            setBakeryInfo({
+                id: 0,
+                name: '기본 빵집',
+                address: '알 수 없음',
+                score: 0,
+                review_number: 0,
+                breads: [],
+                interest: false,
+            });
+            setReviews([]);
 			router.push("/");
 		}
 	}, []);
 
-    useEffect(() => {
-        const url = new URL(location.href);
-
-		const fetchBakeryInfo = async () => {
-			try {
-				const res = await axios.get<BakeryInfo>("http://127.0.0.1:5001/bakeries/" + url.searchParams.get('data'), config)
-				setBakeryInfo(res.data);
-			} catch (error) {
-				if (axios.isAxiosError(error)) {
-					console.error('Error fetching bakeries: ', error.message);
-				}
-			}
-		}
-
-		fetchBakeryInfo();
-	}, [bakeryInfo]);
-
-    useEffect(() => {
-        const url = new URL(location.href);
-
-        const fetchReview = async () => {
-            try {
-                const res = await axios.get<Reviews[]>("http://127.0.0.1:5001/reviews/bakery/" + url.searchParams.get('data'), config);
-                setReviews(res.data);
-            } catch(error) {
-                if (axios.isAxiosError(error)) {
-					console.error('Error fetching bakeries: ', error.message);
-				}
+    const fetchBakeryInfo = async () => {
+        try {
+            const url = new URL(location.href);
+            const res = await axios.get<BakeryInfo>("http://127.0.0.1:5001/bakeries/" + url.searchParams.get('data'), config)
+            if (canLogin === false || Cookies.get('jwt') === undefined){
+                setBakeryInfo({
+                    id: 0,
+                    name: '기본 빵집',
+                    address: '알 수 없음',
+                    score: 0,
+                    review_number: 0,
+                    breads: [],
+                    interest: false,
+                });
+            } else {
+                setBakeryInfo(res.data);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error fetching bakeries: ', error.message);
             }
         }
+    }
 
+    useEffect(() => {
+		fetchBakeryInfo();
+	}, []);
+
+    const fetchReview = async () => {
+        try {
+            const url = new URL(location.href);
+            const res = await axios.get<Reviews[]>("http://127.0.0.1:5001/reviews/bakery/" + url.searchParams.get('data'), config);
+            if (canLogin === false || Cookies.get('jwt') === undefined){
+                setReviews([]);
+            } else {
+                setReviews(res.data);
+            }
+        } catch(error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error fetching bakeries: ', error.message);
+            }
+        }
+    }
+
+    useEffect(() => {
         fetchReview();
     }, []);
 
+    const addInterest = () => {
+        axios.post("http://127.0.0.1:5001/interests", {
+            bakery_id: bakeryInfo.id,
+        }, config)
+        .then(res => {
+            if (res.data.result === undefined){
+                alert("관심 추가 완료");
+                fetchBakeryInfo();
+            } else {
+                alert(res.data.message);
+            }
+        })
+    }
+
+    const deleteInterest = () => {
+        axios.delete("http://127.0.0.1:5001/interests/bakery/" + bakeryInfo.id, config)
+        .then(res => {
+            if (res.data.result === undefined){
+                alert("관심 삭제 완료");
+                fetchBakeryInfo();
+            } else {
+                alert(res.data.message);
+            }
+        })
+    }
     return (
         <>
             <div className={styles.main_box}>
                 <Link href="/mainPage"><button className={styles.homeBtn}>BREAD-MAP</button></Link>
                 <div className={styles.bakery_info}>
+                    <button className={styles.interestBtn} onClick={bakeryInfo.interest ? deleteInterest : addInterest}>{bakeryInfo.interest ? "관심 삭제" : "관심 추가"}</button>
                     <p className={styles.name}>{bakeryInfo.name}</p>
                     <div className={styles.main_info}>
                         <p className={styles.score}>평점 : {bakeryInfo.score}</p>
@@ -196,21 +296,23 @@ function MoreInfo() {
                         </div>
                         <button className={styles.reviewBtn} onClick={clickModal}>리뷰 쓰기</button>
                     </div>
-                    {
-                        reviews.map((review, index) => (
-                            <div className={styles.one_review}>
-                                <div className={styles.user_info}>
-                                    <p className={styles.name}>{review.user_nickname}</p>
-                                    <p className={styles.level}>{review.user_level}</p>
+                    <div className={styles.review_collection}>
+                        {
+                            reviews.map((review, index) => (
+                                <div key={index} className={styles.one_review}>
+                                    <div className={styles.user_info}>
+                                        <p className={styles.name}>{review.user_nickname}</p>
+                                        <p className={styles.level}>({review.user_level})</p>
+                                    </div>
+                                    <p>평점 : {review.score}점</p>
+                                    <div className={styles.comment}>{review.content}</div>
                                 </div>
-                                <p>평점 : {review.score}점</p>
-                                <div className={styles.comment}>{review.content}</div>
-                            </div>
-                        ))
-                    }
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
-            {showModal && <ModalPage clickModal={clickModal}/>}
+            {showModal && <ModalPage bakeryId={bakeryInfo.id} bakeryName={bakeryInfo.name} clickModal={clickModal} fetchBakeryInfo={fetchBakeryInfo} fetchReview={fetchReview}/>}
         </>
     );
 }

@@ -2,45 +2,147 @@
 
 import Link from "next/link";
 import styles from "./myPage.module.css";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
+interface UserInfo {
+    id: number;
+    email: string;
+    nickname: string;
+    image: string;
+    point: number;
+    level_name: string;
+}
+
+interface InterestBakeryInfo {
+    id: number;
+    bakery_id: number;
+    bakery_name: string;
+    bakery_score: number;
+    breads: string[];
+}
+
+interface MyReviewInfo {
+    id: number;
+    content: string;
+    image: string;
+    score: number;
+    bakery_id: number;
+    bakery_name: string;
+    breads: string[];
+}
 
 const MyPage = () => {
-    const data = [
-        { id: 1, text: '빵집1' },
-        { id: 2, text: '빵집2' },
-        { id: 3, text: '빵집3' },
-        { id: 4, text: '빵집4' },
-        { id: 5, text: '빵집5' },
-    ];
-    
-    const reviewData = [
-        { id: 1, bakery: '빵집1', score: 4, text: "완전 맛있어요!"},
-        { id: 2, bakery: '빵집2', score: 3, text: "이거 텍스트가 언제까지 길어지는 거에요?" },
-        { id: 3, bakery: '빵집3', score: 5, text: "여기는 좀 쉽지 않네요" },
-        { id: 4, bakery: '빵집4', score: 3, text: "좋아요 굿굿" },
-        { id: 5, bakery: '빵집5', score: 5, text: "한번 두번 세번 네번 다섯번 또 갈 생각입니다" },
-    ]
+    const router = useRouter();
+    const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 상태 유지 여부
+    const [userInfo, setUserInfo] = useState<UserInfo>({
+        id: 0,
+        email: "email",
+        nickname: "none",
+        image: "image",
+        point: 0,
+        level_name: "none",
+    });
+    const [myInterest, setMyInterest] = useState<InterestBakeryInfo[]>([]);
+    const [myReview, setMyReview] = useState<MyReviewInfo[]>([]);
+
+    const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const res = await axios.get("http://127.0.0.1:5001/users", config);
+                if (res.data.result === undefined) {
+                    setUserInfo(res.data);
+                    setCanLogin(true);
+                } else {
+                    setUserInfo({
+                        id: 0,
+                        email: "email",
+                        nickname: "none",
+                        image: "image",
+                        point: 0,
+                        level_name: "none",
+                    });
+                    setCanLogin(false);
+                    Cookies.remove("jwt");
+                    router.push("/");
+                }
+            } catch (error) {
+                console.error('Error checking login:', error);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
+    useEffect(() => {
+        const fetchMyInterest = async () => {
+            try {
+                const res = await axios.get("http://127.0.0.1:5001/interests", config);
+                if (canLogin === false || Cookies.get('jwt') === undefined){
+                    setMyInterest([]);
+                } else {
+                    setMyInterest(res.data);
+                }
+            } catch (error) {
+                console.error('Error checking login:', error);
+            }
+        }
+
+        fetchMyInterest();
+    }, []);
+
+    useEffect(() => {
+        const fetchMyReview = async () => {
+            try {
+                const res = await axios.get("http://127.0.0.1:5001/reviews", config);
+                if (canLogin === false || Cookies.get('jwt') === undefined){
+                    setMyReview([]);
+                } else {
+                    setMyReview(res.data);
+                }
+            } catch (error) {
+                console.error('Error checking login:', error);
+            }
+        }
+
+        fetchMyReview();
+    }, []);
+
+    const handleLogout = () => {
+		Cookies.remove("jwt");
+		router.push("/");
+	}
 
     return (
         <div className={styles.main}>
-            <Link href="/"><button className={styles.homeBtn}>BREAD-MAP</button></Link>
+            <Link href="/mainPage"><button className={styles.homeBtn}>BREAD-MAP</button></Link>
             <div className={styles.user_info}>
-                <div className={styles.user_img}>이미지</div>
+                <div className={styles.user_img}>{userInfo.image}</div>
                 <div className={styles.user_name}>
-                    <p className={styles.user_nickname}>유저 닉네임</p>
-                    <p className={styles.user_email}>유저 이메일</p>
+                    <p className={styles.user_nickname}>{userInfo.nickname}</p>
+                    <p className={styles.user_email}>{userInfo.email}</p>
+                    <p className={styles.user_level}>{userInfo.level_name}({userInfo.point}포인트)</p>
                 </div>
-                <button className={styles.logoutBtn}>로그아웃</button>
+                <button className={styles.logoutBtn} onClick={handleLogout}>로그아웃</button>
             </div>
             <div className={styles.user_interest}>
                 <p className={styles.title}>내 관심 빵집</p>
                 <div className={styles.interest_box}>
-                    {data.map((item, index) => (
-                        <div key={item.id} className={styles.bakery}>
+                    {myInterest.map((interest, index) => (
+                        <div key={interest.id} className={styles.bakery}>
                             <p className={styles.rank}>{index + 1}</p>
-                            <p>{item.text}</p>
-                            <p>평점 : 어쩌구</p>
-                            <p>카테고리: 어쩌구</p>
+                            <p>{interest.bakery_name}</p>
+                            <p>평점 : {interest.bakery_score}</p>
+                            <p>카테고리: {interest.breads}</p>
                             <button className={styles.delete_interest}>관심 삭제</button>
                         </div>
                     ))}
@@ -49,13 +151,13 @@ const MyPage = () => {
             <div className={styles.user_review}>
                 <p className={styles.title}>내 리뷰</p>
                 <div className={styles.review_box}>
-                    {reviewData.map((review, index) => (
+                    {myReview.map((review, index) => (
                         <div key={review.id} className={styles.review}>
                             <p className={styles.rank}>{index + 1}</p>
-                            <p>{review.bakery}</p>
+                            <p>{review.bakery_name}</p>
                             <p>평점 : {review.score}</p>
-                            <p>카테고리: 어쩌구</p>
-                            <p className={styles.text}>{review.text}</p>
+                            <p>카테고리: {review.breads}</p>
+                            <p className={styles.text}>{review.content}</p>
                             <button className={styles.delete_review}>리뷰 삭제</button>
                         </div>
                     ))}
