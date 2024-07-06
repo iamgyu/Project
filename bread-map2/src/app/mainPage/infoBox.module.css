@@ -113,9 +113,15 @@
   
     .info_main_rank {
       flex: 1;
-      
+      overflow-y: auto;
+
       .rank_category {
+        position: fixed;
+        width: 400px;
+        height: 150px;
+        z-index: 99;
         padding: 20px;
+        background-color: white;
         border-bottom: 1px solid rgb(238, 238, 238);
         
         .title {
@@ -144,11 +150,32 @@
           }
         }
       }
+      
+      .menu_rank {
+        margin-top: 150px;
+
+        .bakery_rank {
+          padding: 20px;
+          display: flex;
+          gap: 10px;
+          cursor: pointer;
+          
+          .rank {
+            width: 20px;
+            font-weight: bold;
+          }
+
+          .bakery_info {
+            padding: 0 20px;
+          }
+        }
+      }
     }
   
     .info_main_interest {
       flex: 1;
-  
+      overflow-y: auto;
+      
       .interests {
         padding: 20px;
   
@@ -160,6 +187,7 @@
         .bakery {
           display: flex;
           padding: 20px 0;
+          cursor: pointer;
   
           .rank {
             font-weight: bold;

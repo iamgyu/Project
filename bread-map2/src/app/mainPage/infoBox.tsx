@@ -1,120 +1,255 @@
 'use client'
 
+import axios from 'axios';
 import styles from './infoBox.module.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation';
 
 interface InfoBoxProps {
     activeIndex: number;
     setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
     categoryIndex: number;
     setCategoryIndex: React.Dispatch<React.SetStateAction<number>>;
-  }
+    setIsClicked: React.Dispatch<React.SetStateAction<number>>;
+}
   
-  interface MainSearchProps {
+interface MainSearchProps {
     categoryIndex: number;
     setCategoryIndex: React.Dispatch<React.SetStateAction<number>>;
-  }
+}
   
-  const MainSearch: React.FC<MainSearchProps> = ({categoryIndex, setCategoryIndex}) => {
+const MainSearch: React.FC<MainSearchProps> = ({categoryIndex, setCategoryIndex}) => {
     const categoryList = [
-      { id: 1, text: '전체' },
-      { id: 2, text: '소금빵' },
-      { id: 3, text: '식빵' },
-      { id: 4, text: '베이글'},
-      { id: 5, text: '휘낭시에'},
+        { id: 0, text: '전체'},
+        { id: 1, text: '베이글' },
+        { id: 2, text: '소금빵' },
+        { id: 3, text: '휘낭시에' },
+        { id: 4, text: '식빵' },
+        { id: 5, text: '크림빵' },
+        { id: 6, text: '케이크' },
     ];
-  
+
     const clickCategory = (index: number) => {
-      setCategoryIndex(index === categoryIndex ? -1 : index);
+        setCategoryIndex(index === categoryIndex ? categoryIndex : index);
     };
-  
+
     return (
-      <div className={styles.info_main_search}>
-        <div className={styles.around_search}>
-          <p className={styles.title}>주변 검색</p>
-          <ul className={styles.category}>
-            {
-              categoryList.map((item, index) => (
-                <li className={styles.item} key={item.id} onClick={() => clickCategory(index)}
-                style={{borderColor: index === categoryIndex ? "#98DDBD" : "gray"}}>
-                  {item.text}
-                </li>
-              ))
-            }
-          </ul>
+        <div className={styles.info_main_search}>
+            <div className={styles.around_search}>
+                <p className={styles.title}>주변 검색</p>
+                <ul className={styles.category}>
+                {
+                    categoryList.map((item, index) => (
+                    <li className={styles.item} key={item.id} onClick={() => clickCategory(index)}
+                    style={{borderColor: index === categoryIndex ? "#98DDBD" : "gray"}}>
+                        {item.text}
+                    </li>
+                    ))
+                }
+                </ul>
+            </div>
         </div>
-      </div>
     )
-  }
-  
-  const MainRank = () => {
+}
+
+interface BakeryRankInfo {
+    id: number;
+    name: string;
+    address: string;
+    score: number;
+    review_number: number;
+    breads: string[];
+}
+
+interface MainRankProps {
+    setIsClicked: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const MainRank: React.FC<MainRankProps> = ({setIsClicked}) => {
+    
     const categoryList = [
-      { id: 1, text: '전체' },
-      { id: 2, text: '소금빵' },
-      { id: 3, text: '식빵' },
-      { id: 4, text: '베이글'},
-      { id: 5, text: '휘낭시에'},
-      { id: 6, text: '크림빵'},
-      { id: 7, text: '케이크'},
+        { id: 0, text: '전체'},
+        { id: 1, text: '베이글' },
+        { id: 2, text: '소금빵' },
+        { id: 3, text: '휘낭시에' },
+        { id: 4, text: '식빵' },
+        { id: 5, text: '크림빵' },
+        { id: 6, text: '케이크' },
     ];
-  
+
+    const router = useRouter();
+    const [canLogin, setCanLogin] = useState<boolean | null>(null);
+    const [bakeryRank, setBakeryRank] = useState<BakeryRankInfo[]>([]);
     const [categoryIndex, setCategoryIndex] = useState(0);
-  
+
+    const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+
     const clickCategory = (index: number) => {
       setCategoryIndex(index === categoryIndex ? categoryIndex : index);
     };
+    
+    useEffect(() => {
+		const checkLogin = async () => {
+			try {
+				const res = await axios.get("http://127.0.0.1:5001/users", config);
+				if (res.data.result === "로그인 실패") {
+					setCanLogin(false);
+				} else {
+					setCanLogin(true);
+				}
+			} catch (error) {
+				console.error('Error checking login:', error);
+				setCanLogin(false);
+			}
+		};
+		checkLogin();
+	}, []);
+
+	useEffect(() => {
+		if (canLogin === false || Cookies.get('jwt') === undefined){
+			Cookies.remove('jwt');
+			setBakeryRank([]);
+			router.push("/");
+		}
+	}, [canLogin]);
+
+    useEffect(() => {
+		const fetchBakeries = async () => {
+			try {
+				var res;
+				if (categoryIndex === 0){
+					res = await axios.get<BakeryRankInfo[]>("http://127.0.0.1:5001/bakeries/ranking", config);
+				} else {
+					res = await axios.get<BakeryRankInfo[]>("http://127.0.0.1:5001/bakeries/ranking/" + categoryIndex, config);
+				}
+				
+				if (!canLogin || Cookies.get('jwt') === undefined){
+					setBakeryRank([]);
+				} else {
+					setBakeryRank(res.data);
+				}
+			} catch (error) {
+				if (axios.isAxiosError(error)) {
+					console.error('Error fetching bakeries: ', error.message);
+				}
+			}
+		}
+		
+		fetchBakeries();
+	}, [canLogin, categoryIndex]);
   
     return (
-      <div className={styles.info_main_rank}>
-        <div className={styles.rank_category}>
-          <p className={styles.title}>카테고리 별 랭킹</p>
-          <ul className={styles.category}>
-            {
-              categoryList.map((item, index) => (
-                <li className={styles.item} key={item.id} onClick={() => clickCategory(index)}
-                style={{borderColor: index === categoryIndex ? "#98DDBD" : "gray"}}>
-                  {item.text}
-                </li>
-              ))
-            }
-          </ul>
+        <div className={styles.info_main_rank}>
+            <div className={styles.rank_category}>
+                <p className={styles.title}>카테고리 별 랭킹</p>
+                <ul className={styles.category}>
+                    {
+                    categoryList.map((item, index) => (
+                        <li className={styles.item} key={item.id} onClick={() => clickCategory(index)}
+                        style={{borderColor: index === categoryIndex ? "#98DDBD" : "gray"}}>
+                        {item.text}
+                        </li>
+                    ))
+                    }
+                </ul>
+            </div>
+            <div className={styles.menu_rank}>
+                {bakeryRank.map((bakery, index) => (
+                    <div key={bakery.id} className={styles.bakery_rank} onClick={() => setIsClicked(bakery.id)}>
+                        <p className={styles.rank}>{index + 1}</p>
+                        <div className={styles.bakery_info}>
+                            <p>{bakery.name}</p>
+                            <p>평점 : {bakery.score}</p>
+                            <p>카테고리: {bakery.breads.join(", ")}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
-        <div className={styles.menu_rank}>
-          {categoryList[categoryIndex].text}
-        </div>
-      </div>
     )
-  }
+}
+
+interface InterestBakeryInfo {
+    id: number;
+    bakery_id: number;
+    bakery_name: string;
+    bakery_score: number;
+    breads: string[];
+}
+
+interface MainInterestProps {
+    setIsClicked: React.Dispatch<React.SetStateAction<number>>;
+}
   
-  const MainInterest = () => {
-    const data = [
-      { id: 1, text: '빵집1' },
-      { id: 2, text: '빵집2' },
-      { id: 3, text: '빵집3' },
-      { id: 4, text: '빵집4' },
-      { id: 5, text: '빵집5' },
-    ];
+const MainInterest: React.FC<MainInterestProps> = ({setIsClicked}) => {
+    const [canLogin, setCanLogin] = useState<boolean | null>(null);
+    const [myInterest, setMyInterest] = useState<InterestBakeryInfo[]>([]);
+    const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+    useEffect(() => {
+		const checkLogin = async () => {
+			try {
+				const res = await axios.get("http://127.0.0.1:5001/users", config);
+				if (res.data.result === "로그인 실패") {
+					setCanLogin(false);
+				} else {
+					setCanLogin(true);
+				}
+			} catch (error) {
+				console.error('Error checking login:', error);
+				setCanLogin(false);
+			}
+		};
+		checkLogin();
+	}, []);
+
+    useEffect(() => {
+        const fetchMyInterest = async () => {
+            try {
+                const res = await axios.get("http://127.0.0.1:5001/interests", config);
+                if (canLogin === false || Cookies.get('jwt') === undefined){
+                    setMyInterest([]);
+                } else {
+                    setMyInterest(res.data);
+                }
+            } catch (error) {
+                console.error('Error checking login:', error);
+            }
+        };
+
+        fetchMyInterest();
+    }, []);
   
     return (
       <div className={styles.info_main_interest}>
         <div className={styles.interests}>
-          <p className={styles.title}>내 관심 빵집</p>
-          {data.map((item, index) => (
-            <div key={item.id} className={styles.bakery}>
-              <p className={styles.rank}>{index + 1}</p>
-              <div className={styles.bakery_info}>
-                <p>{item.text}</p>
-                <p>평점 : 어쩌구</p>
-                <p>카테고리: 어쩌구</p>
-              </div>
-            </div>
-          ))}
+            <p className={styles.title}>내 관심 빵집</p>
+            {myInterest.map((interest, index) => (
+                <div key={interest.id} className={styles.bakery} onClick={() => setIsClicked(interest.id)}>
+                <p className={styles.rank}>{index + 1}</p>
+                <div className={styles.bakery_info}>
+                    <p>{interest.bakery_name}</p>
+                    <p>평점 : {interest.bakery_score}</p>
+                    <p>카테고리: {interest.breads.join(", ")}</p>
+                </div>
+                </div>
+            ))}
         </div>
       </div>
     )
-  }
+}
   
-const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryIndex, setCategoryIndex}) => {
+const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryIndex, setCategoryIndex, setIsClicked}) => {
   
     const clickMenu = (index: number) => {
       setActiveIndex(index === activeIndex ? activeIndex : index);
@@ -148,8 +283,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryI
           </div>
         </div>
         { activeIndex === 0 && <MainSearch categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex}/> }
-        { activeIndex === 1 && <MainRank /> }
-        { activeIndex === 2 && <MainInterest /> }
+        { activeIndex === 1 && <MainRank setIsClicked={setIsClicked}/> }
+        { activeIndex === 2 && <MainInterest setIsClicked={setIsClicked}/> }
       </div>
     )
 }

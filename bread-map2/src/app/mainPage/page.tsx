@@ -99,7 +99,6 @@ function MainPage() {
 	const [leftPosition, setLeftPosition] = useState(0);
 	const [activeIndex, setActiveIndex] = useState(0); // header 메뉴 선택 정보를 저장하기 위함
 	const [categoryIndex, setCategoryIndex] = useState(0); // 카테고리 선택 정보를 저장하기 위함(지도에 띄운 정보를 유지)
-	const [isVisible, setIsVisible] = useState([false, false, false]); // 카테고리 선택 시 맵에 마커가 보이는 것을 위함
 	const [isClicked, setIsClicked] = useState(-1); // 맵 마커 클릭 시 div 보임을 위함
 	const [bakeries, setBakeries] = useState<Bakery[]>([]); // 빵집 리스트
 	
@@ -143,7 +142,13 @@ function MainPage() {
 	useEffect(() => {
 		const fetchBakeries = async () => {
 			try {
-				const res = await axios.get<Bakery[]>("http://127.0.0.1:5001/bakeries", config)
+				var res;
+				if (categoryIndex === 0){
+					res = await axios.get<Bakery[]>("http://127.0.0.1:5001/bakeries", config);
+				} else {
+					res = await axios.get<Bakery[]>("http://127.0.0.1:5001/bakeries/category/" + categoryIndex, config);
+				}
+				
 
 				if (!canLogin || Cookies.get('jwt') === undefined){
 					setBakeries([]);
@@ -158,7 +163,7 @@ function MainPage() {
 		}
 		
 		fetchBakeries();
-	}, [canLogin]);
+	}, [canLogin, categoryIndex]);
 
 	const handlePosition = (map: kakao.maps.Map) => {
 		const lng = map.getCenter().getLng();
@@ -200,7 +205,7 @@ function MainPage() {
 
   return (
 		<>
-			{ infoBoxToggle && <InfoBox activeIndex={activeIndex} setActiveIndex={setActiveIndex} categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex} /> }
+			{ infoBoxToggle && <InfoBox activeIndex={activeIndex} setActiveIndex={setActiveIndex} categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex} setIsClicked={setIsClicked}/> }
 			<div className={styles.toggleBtnBox}>
 				<button className={styles.toggleBtn} onClick={toggleClick} style={{ left: `${leftPosition}px` }}>{">"}</button>
 			</div>

@@ -103,7 +103,7 @@
                 display: flex;
                 align-items: center;
                 gap: 20px;
-                padding: 15px 20px;
+                padding: 16px 20px;
         
                 .rank {
                     display: flex;
@@ -148,7 +148,7 @@
                 display: flex;
                 align-items: center;
                 gap: 20px;
-                padding: 15px 20px;
+                padding: 16px 20px;
 
                 .rank {
                     display: flex;
@@ -157,7 +157,14 @@
                     font-weight: bold;
                     width: 20px;
                 }
-
+                
+                .category {
+                    width: 130px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                
                 .text {
                     width: 200px;
                     text-overflow: ellipsis;

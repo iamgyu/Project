@@ -55,65 +55,65 @@ const MyPage = () => {
 		},
 	};
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const res = await axios.get("http://127.0.0.1:5001/users", config);
-                if (res.data.result === undefined) {
-                    setUserInfo(res.data);
-                    setCanLogin(true);
-                } else {
-                    setUserInfo({
-                        id: 0,
-                        email: "email",
-                        nickname: "none",
-                        image: "image",
-                        point: 0,
-                        level_name: "none",
-                    });
-                    setCanLogin(false);
-                    Cookies.remove("jwt");
-                    router.push("/");
-                }
-            } catch (error) {
-                console.error('Error checking login:', error);
+    const fetchUserInfo = async () => {
+        try {
+            const res = await axios.get("http://127.0.0.1:5001/users", config);
+            if (res.data.result === undefined) {
+                setUserInfo(res.data);
+                setCanLogin(true);
+            } else {
+                setUserInfo({
+                    id: 0,
+                    email: "email",
+                    nickname: "none",
+                    image: "image",
+                    point: 0,
+                    level_name: "none",
+                });
+                setCanLogin(false);
+                Cookies.remove("jwt");
+                router.push("/");
             }
-        };
+        } catch (error) {
+            console.error('Error checking login:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchUserInfo();
     }, []);
 
-    useEffect(() => {
-        const fetchMyInterest = async () => {
-            try {
-                const res = await axios.get("http://127.0.0.1:5001/interests", config);
-                if (canLogin === false || Cookies.get('jwt') === undefined){
-                    setMyInterest([]);
-                } else {
-                    setMyInterest(res.data);
-                }
-            } catch (error) {
-                console.error('Error checking login:', error);
+    const fetchMyInterest = async () => {
+        try {
+            const res = await axios.get("http://127.0.0.1:5001/interests", config);
+            if (canLogin === false || Cookies.get('jwt') === undefined){
+                setMyInterest([]);
+            } else {
+                setMyInterest(res.data);
             }
+        } catch (error) {
+            console.error('Error checking login:', error);
         }
+    };
 
+    useEffect(() => {
         fetchMyInterest();
     }, []);
 
-    useEffect(() => {
-        const fetchMyReview = async () => {
-            try {
-                const res = await axios.get("http://127.0.0.1:5001/reviews", config);
-                if (canLogin === false || Cookies.get('jwt') === undefined){
-                    setMyReview([]);
-                } else {
-                    setMyReview(res.data);
-                }
-            } catch (error) {
-                console.error('Error checking login:', error);
+    const fetchMyReview = async () => {
+        try {
+            const res = await axios.get("http://127.0.0.1:5001/reviews", config);
+            if (canLogin === false || Cookies.get('jwt') === undefined){
+                setMyReview([]);
+            } else {
+                setMyReview(res.data);
             }
+        } catch (error) {
+            console.error('Error checking login:', error);
         }
+    }
 
+    useEffect(() => {
         fetchMyReview();
     }, []);
 
@@ -121,6 +121,30 @@ const MyPage = () => {
 		Cookies.remove("jwt");
 		router.push("/");
 	}
+
+    const deleteInterest = (id: number) => {
+        axios.delete("http://127.0.0.1:5001//interests/bakery/" + id, config)
+        .then(res => {
+            if (res.data.result === undefined){
+                alert("관심 삭제 완료");
+                fetchMyInterest();
+            } else {
+                alert(res.data.message);
+            }
+        })
+    };
+    const deleteReview = (id: number) => {
+        axios.delete("http://127.0.0.1:5001/reviews/" + id, config)
+        .then(res => {
+            if (res.data.result === undefined){
+                alert("리뷰 삭제 완료");
+                fetchMyReview();
+                fetchUserInfo();
+            } else {
+                alert(res.data.message);
+            }
+        })
+    };
 
     return (
         <div className={styles.main}>
@@ -142,8 +166,8 @@ const MyPage = () => {
                             <p className={styles.rank}>{index + 1}</p>
                             <p>{interest.bakery_name}</p>
                             <p>평점 : {interest.bakery_score}</p>
-                            <p>카테고리: {interest.breads}</p>
-                            <button className={styles.delete_interest}>관심 삭제</button>
+                            <p>카테고리: {interest.breads.join(", ")}</p>
+                            <button className={styles.delete_interest} onClick={() => deleteInterest(interest.bakery_id)}>관심 삭제</button>
                         </div>
                     ))}
                 </div>
@@ -156,9 +180,9 @@ const MyPage = () => {
                             <p className={styles.rank}>{index + 1}</p>
                             <p>{review.bakery_name}</p>
                             <p>평점 : {review.score}</p>
-                            <p>카테고리: {review.breads}</p>
+                            <p className={styles.category}>카테고리: {review.breads.join(", ")}</p>
                             <p className={styles.text}>{review.content}</p>
-                            <button className={styles.delete_review}>리뷰 삭제</button>
+                            <button className={styles.delete_review} onClick={() => deleteReview(review.id)}>리뷰 삭제</button>
                         </div>
                     ))}
                 </div>
