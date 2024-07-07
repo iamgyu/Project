@@ -64,7 +64,18 @@ const EventMarkerContainer: React.FC<EventMarkerContainerProps> = ({position, id
 				isClicked === id && (
 				<div className={styles.markerInfoBox} onClick={(e) => e.stopPropagation()}>
 					<p className={styles.title}>{oneBakery.name}</p>
-					<p className={styles.score}>평점 : {oneBakery.score} | 리뷰 : {oneBakery.review_number}</p>
+					<div className={styles.rating}>
+						<p className={styles.score}>평점 : {oneBakery.score}</p>
+						<div className={styles.star_rating}>
+							<div className={styles.star_rating_fill} style={{width: `${(oneBakery.score / 5) * 100}%`}}>
+								<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+							</div>
+							<div className={styles.star_rating_base}>
+								<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+							</div>
+						</div>
+						<p className={styles.review}>| 리뷰 : {oneBakery.review_number}</p>
+					</div>
 					<p className={styles.address}>{oneBakery.address}</p>
 					<Link target="_blank" href={{
 						pathname: "/moreInfo",

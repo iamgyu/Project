@@ -191,7 +191,7 @@ function MoreInfo() {
             setReviews([]);
 			router.push("/");
 		}
-	}, []);
+	}, [canLogin]);
 
     const fetchBakeryInfo = async () => {
         try {
@@ -292,7 +292,17 @@ function MoreInfo() {
                     <div className={styles.scores_review}>
                         <div className={styles.total_score}>
                             <p className={styles.total_review}>전체 {bakeryInfo.review_number}</p>
-                            <p className={styles.score}>{bakeryInfo.score}점</p>
+                            <div className={styles.rating}>
+                                <p className={styles.score}>{bakeryInfo.score}점</p>
+                                <div className={styles.star_rating}>
+                                    <div className={styles.star_rating_fill} style={{width: `${(bakeryInfo.score / 5) * 100}%`}}>
+                                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                    </div>
+                                    <div className={styles.star_rating_base}>
+                                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <button className={styles.reviewBtn} onClick={clickModal}>리뷰 쓰기</button>
                     </div>
@@ -304,7 +314,14 @@ function MoreInfo() {
                                         <p className={styles.name}>{review.user_nickname}</p>
                                         <p className={styles.level}>({review.user_level})</p>
                                     </div>
-                                    <p>평점 : {review.score}점</p>
+                                    <div className={styles.star_rating}>
+                                        <div className={styles.star_rating_fill} style={{width: `${(review.score / 5) * 100}%`}}>
+                                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                        </div>
+                                        <div className={styles.star_rating_base}>
+                                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                        </div>
+                                    </div>
                                     <div className={styles.comment}>{review.content}</div>
                                 </div>
                             ))

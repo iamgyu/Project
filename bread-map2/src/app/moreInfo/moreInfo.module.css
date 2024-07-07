@@ -99,10 +99,43 @@
                     font-size: 16px;
                     font-weight: bold;
                 }
-        
-                .score {
-                    font-size: 24px;
-                    font-weight: bold;
+
+                .rating {
+                    display: flex;
+                    gap: 10px;
+                    .score {
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+    
+                    .star_rating {
+                        font-size: 24px;
+                        color: #989898;
+                        position: relative;
+                        unicode-bidi: bidi-override;
+                        width: max-content;
+                        -webkit-text-fill-color: rgb(204, 204, 204);
+                        -webkit-text-stroke-with: 1.3px;
+                        -webkit-text-stroke-color: rgb(236, 104, 99);
+                        margin: 0 10px 0 0;
+    
+                        .star_rating_fill {
+                            color: rgb(236, 104, 99);
+                            padding: 0;
+                            position: absolute;
+                            z-index: 1;
+                            display: flex;
+                            top: 0;
+                            left: 0;
+                            overflow: hidden;
+                            -webkit-text-fill-color: rgb(236, 104, 99);
+                        }
+    
+                        .star_rating_base {
+                            z-index: 0;
+                            padding: 0;
+                        }
+                    }
                 }
             }
 
@@ -135,6 +168,34 @@
                         color: gray;
                         font-size: 12px;
                         line-height: 16px;
+                    }
+                }
+
+                .star_rating {
+                    color: #989898;
+                    position: relative;
+                    unicode-bidi: bidi-override;
+                    width: max-content;
+                    -webkit-text-fill-color: rgb(204, 204, 204);
+                    -webkit-text-stroke-with: 1.3px;
+                    -webkit-text-stroke-color: rgb(236, 104, 99);
+                    margin: 0 10px 0 0;
+
+                    .star_rating_fill {
+                        color: rgb(236, 104, 99);
+                        padding: 0;
+                        position: absolute;
+                        z-index: 1;
+                        display: flex;
+                        top: 0;
+                        left: 0;
+                        overflow: hidden;
+                        -webkit-text-fill-color: rgb(236, 104, 99);
+                    }
+
+                    .star_rating_base {
+                        z-index: 0;
+                        padding: 0;
                     }
                 }
             }
