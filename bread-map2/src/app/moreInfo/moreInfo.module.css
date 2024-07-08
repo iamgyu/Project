@@ -150,53 +150,64 @@
 
             .one_review {
                 display: flex;
-                flex-direction: column;
-                gap: 8px;
+                align-items: center;
                 padding: 15px 0;
                 border-bottom: 1px solid rgb(239, 239, 239);
-    
-                .user_info {
+                
+                .review_words {
                     display: flex;
-                    gap: 10px;
-    
-                    .name {
-                        font-weight: bold;
-                        line-height: 16px;
+                    flex-direction: column;
+                    gap: 8px;
+                    
+                    .user_info {
+                        display: flex;
+                        gap: 10px;
+        
+                        .name {
+                            font-weight: bold;
+                            line-height: 16px;
+                        }
+        
+                        .level {
+                            color: gray;
+                            font-size: 12px;
+                            line-height: 16px;
+                        }
                     }
     
-                    .level {
-                        color: gray;
-                        font-size: 12px;
-                        line-height: 16px;
+                    .star_rating {
+                        color: #989898;
+                        position: relative;
+                        unicode-bidi: bidi-override;
+                        width: max-content;
+                        -webkit-text-fill-color: rgb(204, 204, 204);
+                        -webkit-text-stroke-with: 1.3px;
+                        -webkit-text-stroke-color: rgb(236, 104, 99);
+                        margin: 0 10px 0 0;
+    
+                        .star_rating_fill {
+                            color: rgb(236, 104, 99);
+                            padding: 0;
+                            position: absolute;
+                            z-index: 1;
+                            display: flex;
+                            top: 0;
+                            left: 0;
+                            overflow: hidden;
+                            -webkit-text-fill-color: rgb(236, 104, 99);
+                        }
+    
+                        .star_rating_base {
+                            z-index: 0;
+                            padding: 0;
+                        }
                     }
                 }
 
-                .star_rating {
-                    color: #989898;
-                    position: relative;
-                    unicode-bidi: bidi-override;
-                    width: max-content;
-                    -webkit-text-fill-color: rgb(204, 204, 204);
-                    -webkit-text-stroke-with: 1.3px;
-                    -webkit-text-stroke-color: rgb(236, 104, 99);
-                    margin: 0 10px 0 0;
-
-                    .star_rating_fill {
-                        color: rgb(236, 104, 99);
-                        padding: 0;
-                        position: absolute;
-                        z-index: 1;
-                        display: flex;
-                        top: 0;
-                        left: 0;
-                        overflow: hidden;
-                        -webkit-text-fill-color: rgb(236, 104, 99);
-                    }
-
-                    .star_rating_base {
-                        z-index: 0;
-                        padding: 0;
-                    }
+                .imgBox {
+                    margin-left: auto;
+                    width: 100px;
+                    height: 100px;
                 }
             }
         }
@@ -213,6 +224,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 30;
 
     .modalContent {
         display: flex;
@@ -273,24 +285,67 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             flex: 1 1 auto;
-            gap: 20px;
+            gap: 10px;
+            width: 100%;
+            
+            .reviewinfo {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 400px;
 
-            .commentBox {
-                color: black;
-                background-color: white;
+                .commentBox {
+                    width: 100%;
+                    margin: 10px 0;
+                    height: 100px;
+                    color: black;
+                    background-color: white;
+                }
+
+                .img {
+                    margin: 8px 0;
+                    width: 100px;
+                    height: 100px;
+                    max-height: 100px;
+                    max-width: 100px;
+                }
+
+                .fileBtn {
+                    padding: 3px 6px;
+                    font-size: 12px;
+                    border-radius: 4px;
+                    background-color: gray;
+                    color: white;
+                }
             }
             
             .btnCollection {
                 display: flex;
-                gap: 20px;
-                
-                .btn {
-                    padding: 16px 48px;
-                    border-radius: 16px;
-                    background-color: black;
-                    color: white;
+                flex: 1;
+                position: relative;
+                width: 100%;
+
+                .cancleBtn {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    padding: 24px;
+                    font-size: 16px;
+                    color: black;
+                    background-color: transparent;
+                    border: none;
+                    cursor: pointer;
+                }
+
+                .registBtn {
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    padding: 24px;
+                    font-size: 16px;
+                    color: black;
+                    background-color: transparent;
                     border: none;
                     cursor: pointer;
                 }

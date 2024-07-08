@@ -21,6 +21,7 @@ interface CategoryState {
 }
 
 const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal, fetchBakeryInfo, fetchReview}) => {
+    const [postImg, setPostImg] = useState("");
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(1);
     const [categorySelect, setCategorySelect] = useState<CategoryState>({
@@ -48,6 +49,22 @@ const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal,
 		},
 	};
 
+    const uploadFile = (e: any) => {
+        const fileList = e.target.files;
+        const reader = new FileReader();
+        if (fileList.length !== 0) {
+            reader.readAsDataURL(fileList[0]);
+        } else {
+            setPostImg("");
+        }
+
+        reader.onload = () => {
+            if (typeof reader.result === 'string') {
+                setPostImg(reader.result);
+            }
+        };
+    };
+
     const clickCategory = (id: number) => {
         setCategorySelect(prevState => ({
             ...prevState,
@@ -58,7 +75,7 @@ const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal,
     const reviewHandle = () => {
         axios.post("http://127.0.0.1:5001/reviews", {
             content: content,
-            image: "image",
+            image: postImg,
             score: rating,
             bakery_id: bakeryId,
             category_ids: Object.entries(categorySelect).filter(([key, value]) => value).map(([key, value]) => parseInt(key, 10)),
@@ -101,10 +118,17 @@ const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal,
                     </div>
                 </div>
                 <div className={styles.comment}>
-                    <textarea className={styles.commentBox} rows={12} cols={50} onChange={(e) => setContent(e.target.value)}/>
+                    <div className={styles.reviewinfo}>
+                        <textarea className={styles.commentBox} onChange={(e) => setContent(e.target.value)}/>
+                        <img className={styles.img} src={postImg} />
+                        <span>
+                            <label className={styles.fileBtn} htmlFor="file_input">파일 첨부</label>
+                            <input type="file" id="file_input" name="image" accept="image/*" style={{display: "none"}} onChange={uploadFile}/>
+                        </span>
+                    </div>
                     <div className={styles.btnCollection}>
-                        <button className={styles.btn} onClick={clickModal}>취소</button>
-                        <button className={styles.btn} onClick={reviewHandle}>등록</button>
+                        <button className={styles.cancleBtn} onClick={clickModal}>취소</button>
+                        <button className={styles.registBtn} onClick={reviewHandle}>등록</button>
                     </div>
                 </div>
             </div>
@@ -266,6 +290,7 @@ function MoreInfo() {
             }
         })
     }
+
     return (
         <>
             <div className={styles.main_box}>
@@ -310,19 +335,24 @@ function MoreInfo() {
                         {
                             reviews.map((review, index) => (
                                 <div key={index} className={styles.one_review}>
-                                    <div className={styles.user_info}>
-                                        <p className={styles.name}>{review.user_nickname}</p>
-                                        <p className={styles.level}>({review.user_level})</p>
-                                    </div>
-                                    <div className={styles.star_rating}>
-                                        <div className={styles.star_rating_fill} style={{width: `${(review.score / 5) * 100}%`}}>
-                                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                    <div className={styles.review_words}>
+                                        <div className={styles.user_info}>
+                                            <p className={styles.name}>{review.user_nickname}</p>
+                                            <p className={styles.level}>({review.user_level})</p>
                                         </div>
-                                        <div className={styles.star_rating_base}>
-                                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                        <div className={styles.star_rating}>
+                                            <div className={styles.star_rating_fill} style={{width: `${(review.score / 5) * 100}%`}}>
+                                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                            </div>
+                                            <div className={styles.star_rating_base}>
+                                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                            </div>
                                         </div>
+                                        <div className={styles.comment}>{review.content}</div>
                                     </div>
-                                    <div className={styles.comment}>{review.content}</div>
+                                    <div className={styles.imgBox}>
+                                        <img className={styles.img} src={review.image} style={{maxWidth: "100px", maxHeight: "100px"}} />
+                                    </div>
                                 </div>
                             ))
                         }
