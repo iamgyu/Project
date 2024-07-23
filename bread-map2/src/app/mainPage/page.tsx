@@ -227,10 +227,10 @@ function MainPage() {
 				<button className={styles.currentLocBtn} onClick={currentLocClick}>현재위치</button>
 			</div>
 			<div className={styles.myPage}>
-				<Link href={"/myPage"}><button className={styles.myPageBtn}>마이페이지</button></Link>
+				<Link target="_blank" href={"/myPage"}><button className={styles.myPageBtn}>마이페이지</button></Link>
 			</div>
 			<div className={styles.addBakery}>
-				<Link href={"/addBakery"}><button className={styles.addBakeryBtn}>빵집 추가</button></Link>
+				<Link href={"/addBakery"}><button className={styles.addBakeryBtn}>빵집추가</button></Link>
 			</div>
 			<Map
 				center={position}

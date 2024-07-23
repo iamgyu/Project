@@ -21,7 +21,7 @@ interface CategoryState {
 }
 
 const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal, fetchBakeryInfo, fetchReview}) => {
-    const [postImg, setPostImg] = useState("");
+    const [postImg, setPostImg] = useState('');
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(1);
     const [categorySelect, setCategorySelect] = useState<CategoryState>({
@@ -54,8 +54,6 @@ const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal,
         const reader = new FileReader();
         if (fileList.length !== 0) {
             reader.readAsDataURL(fileList[0]);
-        } else {
-            setPostImg("");
         }
 
         reader.onload = () => {
@@ -120,9 +118,8 @@ const ModalPage: React.FC<ModalPageProps> = ({ bakeryId, bakeryName, clickModal,
                 <div className={styles.comment}>
                     <div className={styles.reviewinfo}>
                         <textarea className={styles.commentBox} onChange={(e) => setContent(e.target.value)}/>
-                        <img className={styles.img} src={postImg} />
                         <span>
-                            <label className={styles.fileBtn} htmlFor="file_input">파일 첨부</label>
+                            <label htmlFor="file_input"><img className={styles.img} src={postImg ? postImg : "/select.png"} /></label>
                             <input type="file" id="file_input" name="image" accept="image/*" style={{display: "none"}} onChange={uploadFile}/>
                         </span>
                     </div>
@@ -160,8 +157,8 @@ function MoreInfo() {
     const router = useRouter();
 
     const [canLogin, setCanLogin] = useState<boolean | null>(null); // 로그인 상태 유지 여부
-    const [showModal, setShowModal] = useState(false);
-    const [bakeryInfo, setBakeryInfo] = useState<BakeryInfo>({
+    const [showModal, setShowModal] = useState(false); // 리뷰 모달 화면 표시 여부
+    const [bakeryInfo, setBakeryInfo] = useState<BakeryInfo>({ // 빵집 정보
         id: 0,
 		name: '기본 빵집',
 		address: '알 수 없음',
@@ -170,7 +167,8 @@ function MoreInfo() {
 		breads: [],
 		interest: false,
     });
-    const [reviews, setReviews] = useState<Reviews[]>([]);
+    const [reviews, setReviews] = useState<Reviews[]>([]);  // 리뷰 정보
+    const [selectLevel, setSelectLevel] = useState(0); // 리뷰 레벨 선택
     
     const config = {
 		headers: {
@@ -248,7 +246,14 @@ function MoreInfo() {
     const fetchReview = async () => {
         try {
             const url = new URL(location.href);
-            const res = await axios.get<Reviews[]>("http://127.0.0.1:5001/reviews/bakery/" + url.searchParams.get('data'), config);
+            var res;
+            if (selectLevel === 0) {
+                res = await axios.get<Reviews[]>("http://127.0.0.1:5001/reviews/bakery/" + url.searchParams.get('data'), config);
+            } else {
+                res = await axios.post<Reviews[]>("http://127.0.0.1:5001/reviews/bakery/" + url.searchParams.get('data'), {
+                    level_id: selectLevel
+                }, config);
+            }
             if (canLogin === false || Cookies.get('jwt') === undefined){
                 setReviews([]);
             } else {
@@ -263,7 +268,7 @@ function MoreInfo() {
 
     useEffect(() => {
         fetchReview();
-    }, []);
+    }, [selectLevel]);
 
     const addInterest = () => {
         axios.post("http://127.0.0.1:5001/interests", {
@@ -290,7 +295,12 @@ function MoreInfo() {
             }
         })
     }
+    
+    const selectLevelCategory = (id: number) => {
+        setSelectLevel(id);
+    }
 
+    console.log(selectLevel);
     return (
         <>
             <div className={styles.main_box}>
@@ -327,6 +337,16 @@ function MoreInfo() {
                                         <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div className={styles.review_select}>
+                            <div className={styles.title}>리뷰 카테고리 선택</div>
+                            <div className={styles.select_category}>
+                                <div className={styles.level} onClick={() => selectLevelCategory(0)}>전체</div>
+                                <div className={styles.level} onClick={() => selectLevelCategory(1)}>초심자</div>
+                                <div className={styles.level} onClick={() => selectLevelCategory(2)}>하수</div>
+                                <div className={styles.level} onClick={() => selectLevelCategory(3)}>중수</div>
+                                <div className={styles.level} onClick={() => selectLevelCategory(4)}>고수</div>
                             </div>
                         </div>
                         <button className={styles.reviewBtn} onClick={clickModal}>리뷰 쓰기</button>

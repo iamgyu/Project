@@ -88,6 +88,7 @@
 
         .scores_review {
             display: flex;
+            justify-content: space-between;
             padding-bottom: 20px;
             border-bottom: 1px solid rgb(239, 239, 239);
 
@@ -139,14 +140,43 @@
                 }
             }
 
-            .reviewBtn {
-                margin-left: auto;
+            .review_select {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 5px;
+                
+                .title {
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                
+                .select_category {
+                    display: flex;
+                    gap: 5px;
+                    
+                    .level {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border: 1px solid black;
+                        padding: 2px 10px;
+                        border-radius: 16px;
+                        font-size: 12px;
+                        cursor: pointer;
+                    }
+                }
             }
         }
 
         .review_collection {
             overflow-y: auto;
             -ms-overflow-style: none;
+
+            & ::-webkit-scrollbar {
+                display: none;
+            }
 
             .one_review {
                 display: flex;
@@ -157,6 +187,7 @@
                 .review_words {
                     display: flex;
                     flex-direction: column;
+                    justify-content: center;
                     gap: 8px;
                     
                     .user_info {
@@ -202,9 +233,15 @@
                             padding: 0;
                         }
                     }
+                    
+                    .comment {
+                        max-width: 550px;
+                    }
                 }
 
                 .imgBox {
+                    display: flex;
+                    align-items: center;
                     margin-left: auto;
                     width: 100px;
                     height: 100px;
@@ -287,7 +324,6 @@
             align-items: center;
             flex: 1 1 auto;
             gap: 10px;
-            width: 100%;
             
             .reviewinfo {
                 display: flex;
@@ -309,14 +345,6 @@
                     height: 100px;
                     max-height: 100px;
                     max-width: 100px;
-                }
-
-                .fileBtn {
-                    padding: 3px 6px;
-                    font-size: 12px;
-                    border-radius: 4px;
-                    background-color: gray;
-                    color: white;
                 }
             }
             

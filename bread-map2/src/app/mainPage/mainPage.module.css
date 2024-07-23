@@ -98,6 +98,7 @@
 	overflow: hidden;
 	top: 10px;
 	right: 10px;
+	width: 80px;
 	z-index: 30;
 	font-size: 16px;
 
@@ -107,6 +108,7 @@
 		border-radius: 4px;
 		font-size: 16px;
 		background-color: #E0B0FF;
+		color: #4B0082;
 		cursor: pointer;
 	}
 }
@@ -115,6 +117,7 @@
 	position: absolute;
 	top: 10px;
 	right: 100px;
+	width: 80px;
 	z-index: 30;
 
 	.currentLocBtn {
@@ -123,6 +126,7 @@
 		border-radius: 4px;
 		font-size: 16px;
 		background-color: #E0B0FF;
+		color: #4B0082;
 		cursor: pointer;
 	}
 }
@@ -130,7 +134,7 @@
 .myPage {
 	position: absolute;
 	top: 10px;
-	right: 200px;
+	right: 280px;
 	z-index: 30;
 
 	.myPageBtn {
@@ -139,6 +143,7 @@
 		border-radius: 4px;
 		font-size: 16px;
 		background-color: #E0B0FF;
+		color: #4B0082;
 		cursor: pointer;
 	}
 }
@@ -146,7 +151,8 @@
 .addBakery {
 	position: absolute;
 	top: 10px;
-	right: 315px;
+	right: 190px;
+	width: 80px;
 	z-index: 30;
 
 	.addBakeryBtn {
@@ -155,6 +161,7 @@
 		border-radius: 4px;
 		font-size: 16px;
 		background-color: #E0B0FF;
+		color: #4B0082;
 		cursor: pointer;
 	}
 }

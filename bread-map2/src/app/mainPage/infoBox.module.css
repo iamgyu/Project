@@ -10,193 +10,212 @@
     background-color: white;
   
     .info_header {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      height: 180px;
-      background-color: #AAF0D1;
-  
-      .logoWord {
-        padding: 20px 20px;
-        color: gray;
-        font-size: 24px;
-        font-weight: bold;
-      }
-  
-      .inputBox {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        .textBox {
-          width: 300px;
-          height: 100%;
-          padding: 10px;
-          border: none;
-          border-radius: 4px 0 0 4px;
-          outline: none;
-          font-size: 16px;
-          color: gray;
-          background-color: white;
-        }
-  
-        .searchBtn {
-          width: 60px;
-          height: 100%;
-          padding: 10px;
-          border: none;
-          border-radius: 0 4px 4px 0;
-          font-size: 16px;
-          background-color: black;
-          cursor: pointer;
-          color: gray;
-          background-color: white;
-        }
-      }
-  
-      .navBar {
-        display: flex;
+        flex-direction: column;
         width: 100%;
-        padding: 20px 0;
-        flex: 1;
-  
-        .menu {
-          display: flex;
-          padding: 0 20px;
-          width: 100%;
-          align-items: center;
-          justify-content: space-evenly;
-          list-style: none;
-  
-          .tab {
-            padding: 5px 15px;
-            border-radius: 4px;
+        height: 180px;
+        background-color: #AAF0D1;
+    
+        .logoWord {
+            padding: 20px 20px;
             color: gray;
-            cursor: pointer;
-          }
+            font-size: 24px;
+            font-weight: bold;
         }
-      }
+
+        .search_bakery {
+            position: relative;
+
+            .inputBox {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                .textBox {
+                    width: 300px;
+                    height: 100%;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 4px 0 0 4px;
+                    outline: none;
+                    font-size: 16px;
+                    color: gray;
+                    background-color: white;
+                }
+        
+                .searchBtn {
+                    width: 60px;
+                    height: 100%;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 0 4px 4px 0;
+                    font-size: 16px;
+                    background-color: black;
+                    cursor: pointer;
+                    color: gray;
+                    background-color: white;
+                }
+            }
+
+            .search_result {
+                position: absolute;
+                top: 38px;
+                left: 20px;
+                z-index: 999;
+                width: 360px;
+                background-color: white;
+                
+                .word {
+                    padding: 10px 8px;
+                    font-size: 14px;
+                    cursor: pointer;
+                }
+            }
+        }
+  
+        .navBar {
+            display: flex;
+            width: 100%;
+            padding: 20px 0;
+            flex: 1;
+    
+            .menu {
+                display: flex;
+                padding: 0 20px;
+                width: 100%;
+                align-items: center;
+                justify-content: space-evenly;
+                list-style: none;
+        
+                .tab {
+                    padding: 5px 15px;
+                    border-radius: 4px;
+                    color: gray;
+                    cursor: pointer;
+                }
+            }
+        }
     }
   
     .info_main_search {
-      flex: 1;
+        flex: 1;
   
       .around_search {
-        padding: 20px;
+            padding: 20px;
   
-        .title {
-          font-size: 18px;
-          font-weight: bold;
+            .title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+  
+            .category {
+                display: flex;
+                list-style: none;
+                flex-wrap: wrap;
+                padding-top: 20px;
+                gap: 10px;
+        
+                .item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 110px;
+                    height: 110px;
+                    color: gray;
+                    border: 1px solid gray;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+            }
         }
-  
-        .category {
-          display: flex;
-          list-style: none;
-          flex-wrap: wrap;
-          padding-top: 20px;
-          gap: 10px;
-  
-          .item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 110px;
-            height: 110px;
-            color: gray;
-            border: 1px solid gray;
-            border-radius: 4px;
-            cursor: pointer;
-          }
-        }
-      }
     }
   
     .info_main_rank {
-      flex: 1;
-      overflow-y: auto;
+        flex: 1;
+        overflow-y: auto;
 
-      .rank_category {
-        position: fixed;
-        width: 400px;
-        height: 150px;
-        z-index: 99;
-        padding: 20px;
-        background-color: white;
-        border-bottom: 1px solid rgb(238, 238, 238);
+        .rank_category {
+            position: fixed;
+            width: 400px;
+            height: 150px;
+            z-index: 99;
+            padding: 20px;
+            background-color: white;
+            border-bottom: 1px solid rgb(238, 238, 238);
+            
+            .title {
+            font-size: 18px;
+            font-weight: bold;
+            }
+  
+            .category {
+                display: flex;
+                flex-wrap: wrap;
+                list-style: none;
+                padding-top: 20px;
+                gap: 10px;
         
-        .title {
-          font-size: 18px;
-          font-weight: bold;
+                .item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 60px;
+                    padding: 5px 0;
+                    color: gray;
+                    border: 1px solid gray;
+                    font-size: 12px;
+                    border-radius: 16px;
+                    cursor: pointer;
+                }
+            }
         }
-  
-        .category {
-          display: flex;
-          flex-wrap: wrap;
-          list-style: none;
-          padding-top: 20px;
-          gap: 10px;
-  
-          .item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            padding: 5px 0;
-            color: gray;
-            border: 1px solid gray;
-            font-size: 12px;
-            border-radius: 16px;
-            cursor: pointer;
-          }
-        }
-      }
       
-      .menu_rank {
-        margin-top: 150px;
+        .menu_rank {
+            margin-top: 150px;
 
         .bakery_rank {
-          padding: 20px;
-          display: flex;
-          gap: 10px;
-          cursor: pointer;
-          
-          .rank {
-            width: 20px;
-            font-weight: bold;
-          }
+                padding: 20px;
+                display: flex;
+                gap: 10px;
+                cursor: pointer;
+            
+                .rank {
+                    width: 20px;
+                    font-weight: bold;
+                }
 
-          .bakery_info {
-            padding: 0 20px;
-          }
+                .bakery_info {
+                    padding: 0 20px;
+                }
+            }
         }
-      }
     }
   
     .info_main_interest {
-      flex: 1;
-      overflow-y: auto;
-      
-      .interests {
-        padding: 20px;
-  
-        .title {
-          font-size: 18px;
-          font-weight: bold;
-        }
-  
-        .bakery {
-          display: flex;
-          padding: 20px 0;
-          cursor: pointer;
-  
-          .rank {
+        flex: 1;
+        overflow-y: auto;
+        
+        .interests {
+            padding: 20px;
+    
+            .title {
+            font-size: 18px;
             font-weight: bold;
-          }
-  
-          .bakery_info {
-            padding: 0 20px;
-          }
+            }
+    
+            .bakery {
+            display: flex;
+            padding: 20px 0;
+            cursor: pointer;
+    
+                .rank {
+                    font-weight: bold;
+                }
+        
+                .bakery_info {
+                    padding: 0 20px;
+                }
+            }
         }
-      }
     }
-  }
+}

@@ -196,6 +196,7 @@ const MainInterest: React.FC<MainInterestProps> = ({setIsClicked}) => {
 			Authorization: Cookies.get("jwt"),
 		},
 	};
+
     useEffect(() => {
 		const checkLogin = async () => {
 			try {
@@ -235,7 +236,7 @@ const MainInterest: React.FC<MainInterestProps> = ({setIsClicked}) => {
         <div className={styles.interests}>
             <p className={styles.title}>내 관심 빵집</p>
             {myInterest.map((interest, index) => (
-                <div key={interest.id} className={styles.bakery} onClick={() => setIsClicked(interest.id)}>
+                <div key={interest.id} className={styles.bakery} onClick={() => setIsClicked(interest.bakery_id)}>
                 <p className={styles.rank}>{index + 1}</p>
                 <div className={styles.bakery_info}>
                     <p>{interest.bakery_name}</p>
@@ -248,39 +249,95 @@ const MainInterest: React.FC<MainInterestProps> = ({setIsClicked}) => {
       </div>
     )
 }
-  
+
+interface SearchBakeryInfo {
+    id: number;
+    name: string;
+    address: string;
+    score: number;
+    review_number: number;
+    breads: string[];
+    interest: boolean;
+}
+
 const InfoBox: React.FC<InfoBoxProps> = ({activeIndex, setActiveIndex, categoryIndex, setCategoryIndex, setIsClicked}) => {
-  
+    
+    const [searchBakeryWords, setSearchBakeryWords] = useState(""); // 빵집 검색 변수
+    const [searchBakeries, setSearchBakeries] = useState<SearchBakeryInfo[]>([]);
     const clickMenu = (index: number) => {
       setActiveIndex(index === activeIndex ? activeIndex : index);
     };
-  
     const itemList = [
       { id: 1, text: '검색' },
       { id: 2, text: '랭킹' },
       { id: 3, text: '관심' },
     ];
+    const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: Cookies.get("jwt"),
+		},
+	};
+
+    useEffect(() => {
+        const fetchSearchBakery = async () => {
+            try {
+                if (searchBakeryWords){
+                    const res = await axios.post("http://127.0.0.1:5001/bakeries/search", {
+                        name: searchBakeryWords
+                    }, config);
+                    console.log(res.data);
+                    setSearchBakeries(res.data);
+                }
+
+            } catch (error) {
+                console.error('Error checking login:', error);
+            }
+        };
+        fetchSearchBakery();
+
+    }, [searchBakeryWords]);
+
+    const handleSearchBakery = () => {
+        if (searchBakeryWords) {
+            axios.post("http://127.0.0.1:5001/bakeries/search", {
+                name: searchBakeryWords
+            }, config)
+            .then(res => {
+                setSearchBakeries(res.data);
+            });
+        }
+    };
   
     return (
       <div className={styles.info_box}>
         <div className={styles.info_header}>
-          <div className={styles.logoWord}>BREAD-MAP</div>
-          <div className={styles.inputBox}>
-            <input className={styles.textBox} type="text" placeholder="장소 검색" />
-            <button className={styles.searchBtn}>검색</button>
-          </div>
-          <div className={styles.navBar}>
-            <ul className={styles.menu}>
-              {
-                itemList.map((item, index) => (
-                  <li className={styles.tab} key={item.id} onClick={() => clickMenu(index)} 
-                    style={{backgroundColor: index === activeIndex ? "#98DDBD" : "transparent"}}>
-                    {item.text}
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
+            <div className={styles.logoWord}>BREAD-MAP</div>
+            <div className={styles.search_bakery}>
+                <div className={styles.inputBox}>
+                    <input className={styles.textBox} type="text" placeholder="장소 검색" onChange={(e) => {setSearchBakeryWords(e.target.value)}}/>
+                    <button className={styles.searchBtn} onClick={handleSearchBakery}>검색</button>
+                </div>
+                <div className={styles.search_result}>
+                    {
+                        searchBakeries.map((bakery, index) => (
+                            <p className={styles.word} key={bakery.id} onClick={() => setIsClicked(bakery.id)}>{bakery.name}</p>
+                        ))
+                    }
+                </div>
+            </div>
+            <div className={styles.navBar}>
+                <ul className={styles.menu}>
+                {
+                    itemList.map((item, index) => (
+                    <li className={styles.tab} key={item.id} onClick={() => clickMenu(index)} 
+                        style={{backgroundColor: index === activeIndex ? "#98DDBD" : "transparent"}}>
+                        {item.text}
+                    </li>
+                    ))
+                }
+                </ul>
+            </div>
         </div>
         { activeIndex === 0 && <MainSearch categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex}/> }
         { activeIndex === 1 && <MainRank setIsClicked={setIsClicked}/> }
